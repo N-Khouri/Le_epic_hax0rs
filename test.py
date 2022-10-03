@@ -29,8 +29,8 @@ def contact_info():
 @app.route('/dashboard/<name>/<password>')
 def dashboard(name, password):
     output1 = 'welcome %s' % name
-    output2 = 'password is %s' % password
-    return output1 + ", z" + output2
+    output2 = 'your password is %s' % password
+    return output1 + ", " + output2
 
 
 
