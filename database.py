@@ -2,6 +2,7 @@ import json
 
 from pymongo import MongoClient
 
+
 mongo_client = MongoClient("mongo")
 database = mongo_client["battle_ships"]
 leaderboard = database["leaderboard"]

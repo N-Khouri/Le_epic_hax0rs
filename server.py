@@ -1,16 +1,18 @@
 import datetime
 from flask import Flask, render_template, request
 from flask import Flask, redirect, url_for, request
+
+import database
+
 app = Flask(__name__)
 
 
-
-@app.route("/",methods = ['POST', 'GET'])
+@app.route("/", methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
         user = request.form['username']
         password = request.form['password']
-        return redirect(url_for('dashboard', name=user, password = password))
+        return redirect(url_for('dashboard', name=user, password=password))
     else:
         user = request.args.get('name')
         return render_template('login.html')
@@ -20,6 +22,7 @@ def index():
 @app.route('/about/', methods=['GET', 'POST'])
 def about():
     return render_template('about.html')
+
 
 @app.route('/contact/')
 def contact_info():
@@ -33,12 +36,8 @@ def dashboard(name, password):
     return output1 + ", " + output2
 
 
-
-
-
-
-
-
-
 if __name__ == '__main__':
-    app.run()
+    host = "0.0.0.0"
+    port = 8000
+
+    app.run(debug=True, host=host, port=port)
