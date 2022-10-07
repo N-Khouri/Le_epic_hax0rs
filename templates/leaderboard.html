@@ -1,28 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title> LEADERBOARD </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE-edge">
+  <meta name="viewport" content="width=   , initial-scale=1.0">
+  <title> LEADERBOARD </title>
+  <!--<link rel="stylesheet" type="text/css" href="style.css"> -->
    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
- <div class="container">
-        <div class="box">
-            <div class="header"> Leaderboard </div>
-                <table border="4">
-                  <tr>
-                    <th>RANK</th>
-                    <th>PLAYER NAME</th>
-                    <th>SCORES</th>
-                    <th>TOTAL GAMES</th>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>Le Epic Hax0rs</td>
-                    <td>10</td>
-                    <td>11</td>
-                  </tr>
-                </table>
+ <div class="leaderboard">
+    <img src="battleship.jpeg" class="leaderboard-image-theme">
+    <div class="leaderboard-title">
+        <h2> Players with the most wins</h2>
+        <input class="leaderboard-search" placeholder="SEARCH PLAYER" id="search" oninput="search()">
+        <table>
+            <thead>
+                <tr>
+                <td></td>
+                <td>PLAYER NAME</td>
+                <td>SCORES</td>
+                <td>TOTAL GAMES</td>
+                </tr>
+            </thead>
 
+            <tbody>
+                <tr>
+                <!-- INSERT INFOR FROM DATABASE -->
+                <th>1</th>
+                <th><p>Epic Hax0rs</p></th>
+                <th>10</th>
+                <th>11</th>
+                </tr>
+
+                <tr>
+                <!-- INSERT INFOR FROM DATABASE -->
+                <th>2</th>
+                <th><p>WTF</p></th>
+                <th>5</th>
+                <th>7</th>
+                </tr>
+
+                <tr>
+                <!-- INSERT INFOR FROM DATABASE -->
+                <th>3</th>
+                <th><p>trial</p></th>
+                <th>0</th>
+                <th>10</th>
+                </tr>
+
+                <tr>
+                    <!-- INSERT INFOR FROM DATABASE -->
+                <th>4</th>
+                <th><p>works</p></th>
+                <th>0</th>
+                <th>10</th>
+                </tr>
+            
+            </tbody>
+        </table>
+    </div>            
 </body>
+
+<!--
+<script>
+    function search(){
+        var input = document.getElementById('search').value;
+        const tr = document.getElementById('tr');
+        for(let i=1; i < tr.length; i++){
+            if(!tr[i].children[1].children[1].innerHTML.toLowerCase().includes(text.toLowerCase())){
+                tr[i].style.display = "none";
+            }
+            else{
+                tr[i].style.display = " ";
+            }
+        }
+    }
+</script>
+-->
 </html>
+
