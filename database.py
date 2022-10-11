@@ -14,12 +14,11 @@ chat = database["chat"]
 def insert_user(username, password):
     lookup = users.find_one({"username": username})
     if lookup != None:
-        return "An account with the inputted username already exists. Please log-in with that account."
+        return 0#"An account with the inputted username already exists. Please log-in with that account."
     else:
         users.insert_one({"username": username, "password": password})
         leaderboard.insert_one({"username": username, "score": 0})
-        return "An account with the username " + username + " has been successfully created."
-
+        return 1#"An account with the username " + username + " has been successfully created."
 
 def all_users():
     list_to_json = list()
@@ -34,5 +33,30 @@ def add_score(username, decider):
         leaderboard.update_one({"username": username}, {'$set': {"username": username, "score": old_score + 1}})
         return "You're win score is: " + old_score + 1
 
+
 # def update_leaderboard():
 #     leaderboard.find_one({}).sort({"score": -1})
+
+
+
+
+
+
+
+######################### TESTING PURPOSES ONLY #######################
+
+def clear_db(): #for testing purposes only
+    database.drop_collection(users)
+    database.drop_collection(leaderboard)
+
+
+def print_users_db():
+    cur = users.find()
+    results = list(cur)
+    users_list = ""
+    for line in results:
+        users_list += (line.get("username") + "\r\n") 
+    return users_list    
+
+
+###########################################################################
