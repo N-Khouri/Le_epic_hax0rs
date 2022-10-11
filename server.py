@@ -9,14 +9,55 @@ app = Flask(__name__)
 
 @app.route("/", methods=['POST', 'GET'])
 def index():
-    if request.method == 'POST':
-        user = request.form['username']
-        password = request.form['password']
-        return redirect(url_for('dashboard', name=user, password=password))
+    if request.method == 'GET':
+        return render_template('index.html') 
     else:
-        user = request.args.get('name')
         return render_template('login.html')
-    # return render_template('login.html')
+
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+        # print(request.method)
+        if request.method == 'GET':
+            # print("asmod")
+            return render_template('login.html')
+        elif request.method == "POST":
+            input_username = request.form['username']
+            input_password = request.form['password'] 
+            ret_val = database.insert_user(input_username, input_password)
+            if ret_val == 0:
+                # print("acc exists")
+                return "an account with the same username has already been created"
+            elif ret_val == 1:
+                # print("acc created")
+                return "account was created, username is: " + input_username + ", and password is: " + input_password
+
+
+
+
+
+
+
+            
+######################### TESTING PURPOSES ONLY #######################
+
+@app.route('/users', methods=['GET', 'POST'])
+def print_users():
+    return database.print_users_db()
+
+
+@app.route('/all', methods=['GET', 'POST', 'DELETE']) # delete thru postman
+def empty_users():
+    if request.method == 'DELETE':
+        database.clear_db()
+    return "DATABASE WAS DESTROYED"
+
+###########################################################################
+
+
+            
+
 
 
 @app.route('/about/', methods=['GET', 'POST'])
@@ -39,5 +80,6 @@ def dashboard(name, password):
 if __name__ == '__main__':
     host = "0.0.0.0"
     port = 8000
+    print("AAAAAAAA")
 
-    app.run(debug=True, host=host, port=port)
+    app.run(debug=False, host=host, port=port)
