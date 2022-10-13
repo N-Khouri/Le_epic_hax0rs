@@ -4,7 +4,6 @@ from pymongo import MongoClient
 
 mongo_client = MongoClient("mongo")
 database = mongo_client["battle_ships"]
-leaderboard = database["leaderboard"]
 users = database["users"]
 active_users = database["active_users"]
 chat = database["chat"]
@@ -42,14 +41,8 @@ def add_score(username, decider):
 def update_leaderboard():
     db_users = json.loads(all_users())
     readable = sorted(db_users, key=lambda key: key["score"])
-    leaderboard.drop()
-    for i in readable:
-        leaderboard.insert_one(i)
-    lb = leaderboard.find({})
-    to_return = []
-    for i in lb:
-        to_return.append(i)
-    return to_return
+    readable = readable[:10]
+    return readable
 
 
 
