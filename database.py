@@ -1,4 +1,5 @@
 import json
+import passwordSec
 
 from pymongo import MongoClient
 
@@ -7,6 +8,19 @@ database = mongo_client["battle_ships"]
 users = database["users"]
 active_users = database["active_users"]
 chat = database["chat"]
+salt = database["salt"]
+
+####################################### Verification Usage Only. Don't play with these functions. #######################################
+def insert_salt(username, _salt):
+    salt.insert_one({"username": username, "salt": _salt})
+
+def get_salt(username):
+    return salt.find_one({"username": username})["salt"]
+
+def get_user_password(username):
+    return users.find_one({"username": username})["password"]
+
+#########################################################################################################################################
 
 # TLDR -> Inserts a user if the user doesn't exist.
 # Functionality -> Call the DB to find the username. If the DB catches a username with the inputted username then exit; otherwise, insert the username and the password as a record into the users collectiion.
@@ -15,7 +29,8 @@ def insert_user(username, password):
     if lookup != None:
         return 0  # "An account with the inputted username already exists. Please log-in with that account."
     else:
-        users.insert_one({"username": username, "password": password, "score": 0})
+        hash_password = passwordSec.user_hash(username, password)
+        users.insert_one({"username": username, "password": hash_password, "score": 0})
         return 1  # "An account with the username " + username + " has been successfully created."
 
 

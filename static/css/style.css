@@ -217,3 +217,7 @@ tbody tr:hover{
     position: relative;    
 }
 
+.grid{
+    border: black solid;
+    padding: 1px
+}
