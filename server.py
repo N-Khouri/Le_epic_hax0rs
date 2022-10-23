@@ -106,6 +106,5 @@ def dashboard(name, password):
 if __name__ == '__main__':
     host = "0.0.0.0"
     port = 8000
-    print("AAAAAAAA")
 
     app.run(debug=False, host=host, port=port)
