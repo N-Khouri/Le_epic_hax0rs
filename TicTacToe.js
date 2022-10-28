@@ -25,18 +25,17 @@ const combinations = [
     [2,5,8]
 ];
 
-
 const PlayerTurn = () => ` ${currentTurn}'s turn`;
 const winMessage = () => ` Player ${currentTurn} has won the game!`;
 const drawMessage = () => `The game is a draw!`;
 gameStatus.innerHTML = PlayerTurn();
+
 
 //function to find which cell the player placed symbol on
 function cellPlayed(clickedcell, cellIndex){
     gamestate[cellIndex] = currentTurn;
     clickedcell.innerHTML = currentTurn;
 }
-
 
 //switches the players turn
 function switchPlayerTurn(){
