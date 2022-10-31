@@ -1,9 +1,11 @@
+"use strict";
 const X = 1;
 const O = 2;
 const empty = 0;
 
-const gameStatus = document.querySelector(".gameStatus")
-
+const gameStatus = document.querySelector(".gameStatus");
+const tiles = Array.from(document.querySelectorAll(".tile"));
+console.log(tiles)
 //if a game is going on currently
 let currentGame = true;
 
@@ -30,6 +32,9 @@ const winMessage = () => ` Player ${currentTurn} has won the game!`;
 const drawMessage = () => `The game is a draw!`;
 gameStatus.innerHTML = PlayerTurn();
 
+tiles.forEach((tile,index) => {
+    tile.addEventListener('click', () => useraction(tile, index));
+});
 
 //function to find which cell the player placed symbol on
 function cellPlayed(clickedcell, cellIndex){
@@ -111,18 +116,18 @@ function RestartGame(){
 }
 
 //adding listeners for when the players play the game, to listen for "click" and check each condition
-document.querySelectorAll('.div').forEach(cell => cell.addEventListener('click', cellClicked))
-document.querySelector('restartGame').addEventListener('click', RestartGame);
+document.querySelectorAll('.div').forEach(cell => cell.addEventListener('click', cellClicked));
+//document.querySelector('restartGame').addEventListener('click', RestartGame);
 
 
-//ask chris what this do
-function initializeHTML(){
-    for (let i = 0; i <= 8; i++){
-        const divElement = document.createElement('div');
-        divElement.id = "grid"+String(i);
-        divElement.setAttribute("coordinate", i)
-        divElement.innerHTML += "hello";
-        document.body.appendChild(divElement);
-    }
-}
+// //ask chris what this do
+// function initializeHTML(){
+//     for (let i = 0; i <= 8; i++){
+//         const divElement = document.createElement('div');
+//         divElement.id = "grid"+String(i);
+//         divElement.setAttribute("coordinate", i)
+//         divElement.innerHTML += "hello";
+//         document.body.appendChild(divElement);
+//     }
+// }
 
