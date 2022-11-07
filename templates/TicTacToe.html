@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="\static\css\style.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
     <title>TIC TAC TOE</title>
 </head>
 <body>
-    <div class = "board" id="board">
-    </div>
-
-    <div class="gameStatus"></div>
-    <button class="restartGame"> Restart Game </button>
-    
-    <input type = "button" onclick="initializeHTML()" value = "Load HTML">
     <script src="/TicTacToe.js"></script>
-    <div id="grid0" class="tile" coordinate="0">0</div>
-    <div id="grid1" class="tile" coordinate="1">1</div>
-    <div id="grid2" class="tile" coordinate="2">2</div>
-    <div id="grid3" class="tile" coordinate="3">3</div>
-    <div id="grid4" class="tile" coordinate="4">4</div>
-    <div id="grid5" class="tile" coordinate="5">5</div>
-    <div id="grid6" class="tile" coordinate="6">6</div>
-    <div id="grid7" class="tile" coordinate="7">7</div>
-    <div id="grid8" class="tile" coordinate="8">8</div>
+    <button class="exitGame" onclick="amogus()"> Exit to main menu</button>
+    <p id="score"> score </p>
+    <p id="timerNumber"> Timer:0 </p>
+    <p class="LUL"> ^ this man does NOT know how to handle truncation errors ^</p>
+    <progress class="timer" id="timer" value="5" max="5"></progress>
+    <p class="choice" id="choice"> You chose: </p>
+    <p class="choice" id="opponentChoice"> Opponent chose: </p>
+    <p class="outcome" id="outcome"> You have: </p>
+    <div class="board">
+        <button class="coinChoice" id="heads" onclick="headsFunction()"> Heads </button>
+        <button class="coinChoice" id="tails" onclick="tailsFunction()"> Tails </button>
+        <p class="coinValue" id="coinValue"></p>
+    </div>
 
 </body>
 </html>

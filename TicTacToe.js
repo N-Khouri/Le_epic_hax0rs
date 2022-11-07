@@ -1,133 +1,112 @@
 "use strict";
-const X = 1;
-const O = 2;
-const empty = 0;
+// const heads = 1;
+// const tails = 0;
 
-const gameStatus = document.querySelector(".gameStatus");
-const tiles = Array.from(document.querySelectorAll(".tile"));
-console.log(tiles)
-//if a game is going on currently
-let currentGame = true;
+// function tossCoin(){
+//     const x = math.random
 
-//X always plays first
-let currentTurn = X;
-
-//temporarily storing the game in array 
-let gamestate = ["", "", "", "", "", "", "", "", ""];
-
-//conditions to check if the player has won the game
-const combinations = [
-    [0,1,2], //rows 
-    [3,4,5],
-    [6,7,8],
-    [0,4,8], //diagonals
-    [2,4,6],
-    [0,3,6], //columns
-    [1,4,7],
-    [2,5,8]
-];
-
-const PlayerTurn = () => ` ${currentTurn}'s turn`;
-const winMessage = () => ` Player ${currentTurn} has won the game!`;
-const drawMessage = () => `The game is a draw!`;
-gameStatus.innerHTML = PlayerTurn();
-
-tiles.forEach((tile,index) => {
-    tile.addEventListener('click', () => useraction(tile, index));
-});
-
-//function to find which cell the player placed symbol on
-function cellPlayed(clickedcell, cellIndex){
-    gamestate[cellIndex] = currentTurn;
-    clickedcell.innerHTML = currentTurn;
-}
-
-//switches the players turn
-function switchPlayerTurn(){
-    currentTurn = currentTurn == X ? O : X;
-    gameStatus.innerHTML = PlayerTurn();
-}
-
-//checks the condition of the game after every turn
-function checkResult(){
-    let Win = false;
-    for (let i =0; i<8 ; i++){
-        const condition = combinations[i];
-        let a = gamestate[condition[0]];
-        let b = gamestate[condition[1]];
-        let c = gamestate[condition[2]];
-        if (a == "" || b == "" || c == ""){
-            continue;
-        }
-
-        if ((a == b) && (b == c)){
-            Win = true;
-            break;
-        }
-    }
-
-    // to check if the round is won
-    if(Win){
-        //display draw win message
-        currentGame = false;
-        return;
-    }
-
-    //to check if the round is draw
-    let Draw = !gamestate.includes("");
-    if(Draw){
-        // display draw message
-        currentGame = false;
-        return;
-    }
-
-    switchPlayerTurn();
-}
-
-
-//function to get the coordinate of the cell player just played, NEED CHRIS'S HELP FOR HTML ELEMENT
-function cellClicked(event){
-    const clickedcell = event.target;
-
-    const cellIndex = parseInt(clickedcell.getAttribute('coordinate'));
-
-    if(gamestate[cellIndex] !== "" || !currentGame){
-        return;
-    }
-
-    cellPlayed(clickedcell, cellIndex);
-    checkResult();
-}
-
-
-//reset the game to original stuff
-function RestartGame(){
-    currentGame = true;
-    currentTurn = X;
-
-    //reset the game data structure to empty
-    //gamestate = ["", "", "", "", "", "", "", "", ""];
-    
-    gameStatus.innerHTML = PlayerTurn();
-
-    //resets the values of html elements to empty
-    document.querySelectorAll('.div').forEach(cell => cell.innerHTML = "");
-
-}
-
-//adding listeners for when the players play the game, to listen for "click" and check each condition
-document.querySelectorAll('.div').forEach(cell => cell.addEventListener('click', cellClicked));
-//document.querySelector('restartGame').addEventListener('click', RestartGame);
-
-
-// //ask chris what this do
-// function initializeHTML(){
-//     for (let i = 0; i <= 8; i++){
-//         const divElement = document.createElement('div');
-//         divElement.id = "grid"+String(i);
-//         divElement.setAttribute("coordinate", i)
-//         divElement.innerHTML += "hello";
-//         document.body.appendChild(divElement);
+//     if (x < 0.5){
+//         return tails;
+//     }
+//     else{
+//         return heads;
 //     }
 // }
 
+//  Things to do: 
+//  Figure out how to prevent users from reseting the timer/making it go faster
+//  Implement live chat
+//  Implement websockets
+//  Implement score functionality
+
+// Time left to choose
+var timeLeft = 5;
+
+const heads = "Heads";
+const tails = "Tails";
+
+var playerChoice = "coin";
+var outcome = "coin";
+
+const youSuck = new Audio('/sounds/YouSuckActual.mp3');
+const AUGH = new Audio('/sounds/AUUGH.mp3')
+const drumRoll = new Audio('/sounds/DrumRoll.mp3')
+// Sets players choice to heads
+function headsFunction(){
+    document.getElementById("choice").innerHTML = "You chose: Heads";
+    playerChoice = heads;
+    startFlipTimer();
+}
+
+// Sets players choice to tails
+function tailsFunction(){
+    document.getElementById("choice").innerHTML = "You chose: Tails";
+    playerChoice = tails;
+    startFlipTimer();
+}
+
+// Starts countdown for both players
+function startFlipTimer(){
+    var timer = setInterval(function(){
+        document.getElementById('timerNumber').innerHTML= "Timer:"+timeLeft;
+        document.getElementById('timer').value -= .01;
+        timeLeft-= .01;
+        if(timeLeft<0){
+            clearInterval(timer);
+            document.getElementById('timer').value = 5;
+            timeLeft = 5;
+        }
+    }, 10);
+    // Flips coin after 7.8 seconds
+    setTimeout(flipCoin, 5000)
+}
+
+// Helper function for setting color of coin
+function randomColor(){
+    return Math.floor(Math.random() * 255);
+}
+
+// Actual flipping of coin
+function flipCoin(){
+    drumRoll.play();
+    var iterations = 24;
+    // interval to build some suspense so we don't have to watch something extremely static
+    var suspense = setInterval(function(){
+        var x = Math.random();
+        document.getElementById("coinValue").style="color: rgba("+randomColor()+","+randomColor()+","+randomColor()+");"
+        // if x is greater or less than .5 set the values respectively
+        if(x < .5){
+            document.getElementById("coinValue").innerHTML = "Heads";
+            outcome = heads;
+        }
+        else{
+            document.getElementById("coinValue").innerHTML = "Tails";
+            outcome = tails;
+            }
+        iterations-= 1;
+        if(iterations<0){
+            clearInterval(suspense);
+        }
+    }, 150);
+
+    // Checks win condition after 2 seconds
+    setTimeout(function(){
+        checkWinner();
+    }, 4500);
+}
+
+// Checks win condition
+function checkWinner(){
+    if (playerChoice == outcome){
+        document.getElementById("outcome").innerHTML = "You have: WON :D";
+        AUGH.play();
+    }
+    else{
+        document.getElementById("outcome").innerHTML = "You have: LOST >:( BOO YOU SUCK!";
+        youSuck.play();
+    }
+}
+
+
+//document.getElementById("coinValue").innerHTML = "Heads";
+//document.getElementById("coinValue").innerHTML = "Tails";
