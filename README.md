@@ -1,2 +1,2 @@
 # Le epic hax0rs 
-# AMOGUS
+ [Here is the link to our report](https://docs.google.com/document/d/1tDtIuMrAPtRhwMGVw9TX87adqMzsTEpy1BK2OEyy7ec/edit?usp=sharing)
