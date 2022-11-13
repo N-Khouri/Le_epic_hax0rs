@@ -10,17 +10,26 @@ active_users = database["active_users"]
 chat = database["chat"]
 salt = database["salt"]
 
+
 ####################################### Verification Usage Only. Don't play with these functions. #######################################
 def insert_salt(username, _salt):
     salt.insert_one({"username": username, "salt": _salt})
 
+
 def get_salt(username):
-    return salt.find_one({"username": username})["salt"]
+    call = salt.find_one({"username": username})
+    if call == None:
+        return 0
+    else:
+        return call["salt"]
+
 
 def get_user_password(username):
     return users.find_one({"username": username})["password"]
 
+
 #########################################################################################################################################
+
 
 # TLDR -> Inserts a user if the user doesn't exist.
 # Functionality -> Call the DB to find the username. If the DB catches a username with the inputted username then exit; otherwise, insert the username and the password as a record into the users collectiion.
@@ -60,12 +69,10 @@ def update_leaderboard():
     return readable
 
 
-
 ######################### TESTING PURPOSES ONLY #######################
 
 def clear_db():  # for testing purposes only
     database.drop_collection(users)
-    database.drop_collection(leaderboard)
 
 
 def print_users_db():
