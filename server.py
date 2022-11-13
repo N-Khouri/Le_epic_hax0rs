@@ -25,18 +25,31 @@ def game():
 def login():
         # print(request.method)
         if request.method == 'GET':
-            # print("asmod")
+            # print("aAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
             return render_template('login.html')
         elif request.method == "POST":
             input_username = request.form['username']
-            input_password = request.form['password'] 
-            ret_val = database.insert_user(input_username, input_password)
-            if ret_val == 0:
-                # print("acc exists")
-                return "an account with the same username has already been created"
-            elif ret_val == 1:
-                # print("acc created")
-                return "account was created, username is: " + input_username + ", and password is: " + input_password
+            input_password = request.form['password']
+            for line in request.form:
+                print(line)
+
+
+
+
+            return render_template('failed_login.html')
+
+
+            # ret_val = database.insert_user(input_username, input_password)
+            # if ret_val == 0:
+            #     # print("acc exists")
+            #     print("an account with the same username has already been created")
+            #     return render_template('failed_login.html')
+            #
+            # elif ret_val == 1:
+            #     # print("acc created")
+            #     print("account was created, username is: " + str(input_username) + ", and password is: " + str(input_password))
+            #     return render_template('main_menu.html')
+
 
 
 
