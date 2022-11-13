@@ -14,7 +14,12 @@ def index():
     else:
         return render_template('login.html')
 
-
+@app.route("/TicTacToe", methods=['POST', 'GET'])
+def game():
+    if request.method == 'GET':
+        return render_template('TicTacToe.html') 
+    else:
+        return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
