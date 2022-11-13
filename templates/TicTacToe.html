@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="\static\css\style.css">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="\static\css\style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>TIC TAC TOE</title>
 </head>
 <body>
-    <script src="/TicTacToe.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='script/TicTacToe.js') }}"></script>
     <button class="exitGame" onclick="amogus()"> Exit to main menu</button>
     <p id="score"> score </p>
     <p id="timerNumber"> Timer:0 </p>

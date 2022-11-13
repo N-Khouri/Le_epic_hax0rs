@@ -28,9 +28,11 @@ const tails = "Tails";
 var playerChoice = "coin";
 var outcome = "coin";
 
-const youSuck = new Audio('/sounds/YouSuckActual.mp3');
-const AUGH = new Audio('/sounds/AUUGH.mp3')
-const drumRoll = new Audio('/sounds/DrumRoll.mp3')
+const youSuck = new Audio('static/sounds/YouSuckActual.mp3');
+const AUGH = new Audio('static/sounds/AUUGH.mp3')
+const drumRoll = new Audio('static/sounds/DrumRoll.mp3')
+const womp = new Audio('static/sounds/womp.mp3')
+
 // Sets players choice to heads
 function headsFunction(){
     document.getElementById("choice").innerHTML = "You chose: Heads";
@@ -103,7 +105,7 @@ function checkWinner(){
     }
     else{
         document.getElementById("outcome").innerHTML = "You have: LOST >:( BOO YOU SUCK!";
-        youSuck.play();
+        womp.play();
     }
 }
 
