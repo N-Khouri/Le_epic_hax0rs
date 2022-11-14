@@ -21,6 +21,12 @@ def game():
     else:
         return render_template('login.html')
 
+
+@app.route('/nuke', methods=['GET', 'POST'])
+def nuke():
+    database.clear_db()
+    return redirect(url_for('login'))
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
         # print(request.method)
@@ -30,25 +36,36 @@ def login():
         elif request.method == "POST":
             input_username = request.form['username']
             input_password = request.form['password']
-            for line in request.form:
-                print(line)
+
+            if request.form.__contains__("register"):
+                print(type(input_password))
+                print(type(input_username))
+                print(input_password)
+                print(input_username)
+
+                ret_val = database.insert_user(input_username, input_password)
+                if ret_val == 0:
+                    return render_template('failed_register.html')
+
+                else:
+                    return render_template('main_menu.html')
+
+            elif request.form.__contains__("login"):
+                get_db_pw = database.get_user_password(input_username)
+                if get_db_pw == input_password:
+                    return render_template('main_menu.html')
+                else:
+                    return render_template('failed_login.html')
 
 
 
 
-            return render_template('failed_login.html')
 
 
-            # ret_val = database.insert_user(input_username, input_password)
-            # if ret_val == 0:
-            #     # print("acc exists")
-            #     print("an account with the same username has already been created")
-            #     return render_template('failed_login.html')
-            #
-            # elif ret_val == 1:
-            #     # print("acc created")
-            #     print("account was created, username is: " + str(input_username) + ", and password is: " + str(input_password))
-            #     return render_template('main_menu.html')
+
+
+
+
 
 
 
