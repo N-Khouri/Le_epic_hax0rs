@@ -21,6 +21,8 @@
 
 // Time left to choose
 var timeLeft = 5;
+var flipLockout = 0;
+var flipStarted = 0;
 
 const heads = "Heads";
 const tails = "Tails";
@@ -28,27 +30,33 @@ const tails = "Tails";
 var playerChoice = "coin";
 var outcome = "coin";
 
-const youSuck = new Audio('static/sounds/YouSuckActual.mp3');
 const AUGH = new Audio('static/sounds/AUUGH.mp3')
 const drumRoll = new Audio('static/sounds/DrumRoll.mp3')
 const womp = new Audio('static/sounds/womp.mp3')
 
 // Sets players choice to heads
 function headsFunction(){
+    if (flipStarted == 0){
     document.getElementById("choice").innerHTML = "You chose: Heads";
     playerChoice = heads;
     startFlipTimer();
+    }
+    else{return;}
 }
 
 // Sets players choice to tails
 function tailsFunction(){
+    if (flipStarted == 0){
     document.getElementById("choice").innerHTML = "You chose: Tails";
     playerChoice = tails;
     startFlipTimer();
+    }
+    else{return;}
 }
 
 // Starts countdown for both players
 function startFlipTimer(){
+    if (flipLockout == 0){
     var timer = setInterval(function(){
         document.getElementById('timerNumber').innerHTML= "Timer:"+timeLeft;
         document.getElementById('timer').value -= .01;
@@ -60,7 +68,10 @@ function startFlipTimer(){
         }
     }, 10);
     // Flips coin after 7.8 seconds
-    setTimeout(flipCoin, 5000)
+    flipLockout = 1;
+    setTimeout(flipCoin, 5000);
+    }
+    else{return;}
 }
 
 // Helper function for setting color of coin
@@ -70,6 +81,7 @@ function randomColor(){
 
 // Actual flipping of coin
 function flipCoin(){
+    flipStarted = 1;
     drumRoll.play();
     var iterations = 24;
     // interval to build some suspense so we don't have to watch something extremely static
