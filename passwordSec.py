@@ -10,7 +10,7 @@ def user_hash(username, password):
     salt = os.urandom(32)
     database.insert_salt(username, salt)
     hash = hashlib.pbkdf2_hmac(
-        'sha-256',
+        'sha256',
         password.encode('utf-8'),
         salt,
         500_000
@@ -26,7 +26,7 @@ def verify(username, password):
     if salt == 0:
         return "An account does not exist for the inputted username."
     hash = hashlib.pbkdf2_hmac(
-        'sha-256',
+        'sha256',
         password.encode('utf-8'),
         salt,
         500_000
