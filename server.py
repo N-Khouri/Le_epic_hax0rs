@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 from flask import Flask, redirect, url_for, request
 
 import database
+import passwordSec
 
 app = Flask(__name__)
 
@@ -51,11 +52,15 @@ def login():
                     return render_template('main_menu.html')
 
             elif request.form.__contains__("login"):
-                get_db_pw = database.get_user_password(input_username)
-                if get_db_pw == input_password:
-                    return render_template('main_menu.html')
-                else:
-                    return render_template('failed_login.html')
+                get_salt = database.get_salt(input_username)
+                if get_salt != 0:
+                    verify = passwordSec.verify(input_username, input_password)
+                    if verify == 1:
+                        return render_template('main_menu.html')
+                    else:
+                        return render_template('failed_login.html')
+
+
 
 
 

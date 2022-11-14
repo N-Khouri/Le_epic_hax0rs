@@ -8,6 +8,7 @@ import os
 ###################### For database usage only ######################
 def user_hash(username, password):
     salt = os.urandom(32)
+    print(salt)
     database.insert_salt(username, salt)
     hash = hashlib.pbkdf2_hmac(
         'sha256',
@@ -23,6 +24,7 @@ def user_hash(username, password):
 # Call this function to verify a returning user's password
 def verify(username, password):
     salt = database.get_salt(username)
+    print(salt + b" -> this is salt")
     if salt == 0:
         return "An account does not exist for the inputted username."
     hash = hashlib.pbkdf2_hmac(
@@ -32,6 +34,8 @@ def verify(username, password):
         500_000
     )
     stored_password = database.get_user_password(username)
+    print(stored_password)
+    print(hash)
     if stored_password == hash:
         return 1
     else:

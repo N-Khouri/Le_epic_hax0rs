@@ -38,11 +38,6 @@ def insert_user(username, password):
     if lookup != None:
         return 0  # "An account with the inputted username already exists. Please log-in with that account."
     else:
-        print("username is: " + username)
-        print("password is: " + password)
-        print(type(password))
-        print(type(username))
-
         hash_password = passwordSec.user_hash(username, password)
         users.insert_one({"username": username, "password": hash_password, "score": 0})
         return 1  # "An account with the username " + username + " has been successfully created."
@@ -78,7 +73,9 @@ def update_leaderboard():
 
 def clear_db():  # for testing purposes only
     database.drop_collection(users)
-
+    database.drop_collection(chat)
+    database.drop_collection(salt)
+    database.drop_collection(active_users)
 
 def print_users_db():
     cur = users.find()
