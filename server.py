@@ -6,6 +6,7 @@ import database
 import passwordSec
 
 app = Flask(__name__)
+sock = Sock(app)
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -21,6 +22,17 @@ def game():
         return render_template('TicTacToe.html') 
     else:
         return render_template('login.html')
+
+
+@sock.route('/echo')
+def echo(ws):
+    request # has all of http information
+    while True: #waits for data on socket from one client
+        data = ws.receive()
+        if data == 'close':
+            break
+        ws.send(data)
+
 
 
 @app.route('/nuke', methods=['GET', 'POST'])
@@ -117,3 +129,9 @@ if __name__ == '__main__':
     port = 8000
 
     app.run(debug=False, host=host, port=port)
+
+
+
+# while true for the websocket, only for the websocket, not for htpp requests
+#example https://github.com/miguelgrinberg/flask-sock/blob/main/examples/echo-gevent.py
+# sock for websockt, app.route is an http flask route, only for http req
