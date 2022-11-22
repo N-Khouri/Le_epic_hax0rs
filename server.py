@@ -6,7 +6,7 @@ import database
 import passwordSec
 
 app = Flask(__name__)
-sock = Sock(app)
+#sock = Sock(app)
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -23,8 +23,14 @@ def game():
     else:
         return render_template('login.html')
 
+@app.route("/leaderboard", methods=['GET'])
+def render_leaderboard():
+    if request.method == 'GET':
+        return render_template('leaderboard.html')
 
-@sock.route('/echo')
+
+
+#@sock.route('/echo')
 def echo(ws):
     request # has all of http information
     while True: #waits for data on socket from one client
@@ -69,8 +75,14 @@ def login():
                     verify = passwordSec.verify(input_username, input_password)
                     if verify == 1:
                         return render_template('main_menu.html')
+                    elif isinstance(verify, str):
+                        print("Username does not exist.")
+                        return render_template('does_not_exist.html')
                     else:
-                        return render_template('failed_login.html')
+                        print('wrong username and password.')
+                        return render_template("failed_login.html")
+                else:
+                    return render_template('does_not_exist.html')
 
 
 
@@ -90,7 +102,7 @@ def login():
 
 
 
-
+#
             
 ######################### TESTING PURPOSES ONLY #######################
 
