@@ -7,7 +7,7 @@ import database
 import passwordSec
 
 app = Flask(__name__)
-#sock = Sock(app)
+sock = Sock(app)
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -33,15 +33,6 @@ def render_leaderboard():
 def main_menu():
     if request.method == 'GET':
         return render_template('main_menu.html')
-
-#@sock.route('/echo')
-def echo(ws):
-    # request # has all of http information
-    while True: #waits for data on socket from one client
-        data = ws.receive()
-        if data == 'close':
-            break
-        ws.send(data)
 
 
 
@@ -113,21 +104,17 @@ def contact_info():
     if request.method == 'GET':
         return render_template('contact_info.html')
 
-@app.route('/images/HeadsTails.jpg', methods=['GET', 'POST'])
-def main_menu():
-    if request.method == 'GET':
-        return render_template('HeadsTails.jpg')
-
-
 @app.route('/dashboard/<name>/<password>')
 def dashboard(name, password):
     output1 = 'welcome %s' % name
     output2 = 'your password is %s' % password
     return output1 + ", " + output2
 
-@app.route("/game")
-def make_game(socket):
-    return
+@sock.route("/game")
+def echo(socket):
+    while True:
+        data = socket.receive()
+        socket.send(data)
 
 if __name__ == '__main__':
     host = "0.0.0.0"
