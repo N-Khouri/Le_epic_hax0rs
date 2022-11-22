@@ -86,25 +86,6 @@ def login():
                     return render_template('does_not_exist.html')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
-            
 ######################### TESTING PURPOSES ONLY #######################
 
 @app.route('/users', methods=['GET', 'POST'])
@@ -136,9 +117,9 @@ def dashboard(name, password):
     output2 = 'your password is %s' % password
     return output1 + ", " + output2
 
-@app.route("/testWebsocket")
+@app.route("/game")
 def make_game(socket):
-    
+    return
 
 if __name__ == '__main__':
     host = "0.0.0.0"
