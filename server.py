@@ -1,6 +1,7 @@
 import datetime
 from flask import Flask, render_template, request
 from flask import Flask, redirect, url_for, request
+from flask_sock import Sock
 
 import database
 import passwordSec
@@ -32,7 +33,7 @@ def render_leaderboard():
 
 #@sock.route('/echo')
 def echo(ws):
-    request # has all of http information
+    # request # has all of http information
     while True: #waits for data on socket from one client
         data = ws.receive()
         if data == 'close':
@@ -135,6 +136,9 @@ def dashboard(name, password):
     output2 = 'your password is %s' % password
     return output1 + ", " + output2
 
+@app.route("/testWebsocket")
+def make_game(socket):
+    
 
 if __name__ == '__main__':
     host = "0.0.0.0"

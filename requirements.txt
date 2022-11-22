@@ -1,4 +1,5 @@
 pymongo
 flask
+flask_sock
 # hashlib
 # os
