@@ -29,7 +29,10 @@ def render_leaderboard():
     if request.method == 'GET':
         return render_template('leaderboard.html')
 
-
+@app.route('/main_menu', methods=['GET', 'POST'])
+def main_menu():
+    if request.method == 'GET':
+        return render_template('main_menu.html')
 
 #@sock.route('/echo')
 def echo(ws):
@@ -99,16 +102,21 @@ def empty_users():
         database.clear_db()
     return "DATABASE WAS DESTROYED"
 
-
-
 @app.route('/about/', methods=['GET', 'POST'])
 def about():
-    return render_template('about.html')
+    if request.method == 'GET':
+        return render_template('about.html')
 
 
-@app.route('/contact/')
+@app.route('/contact_info/',  methods=['GET', 'POST'])
 def contact_info():
-    return render_template('contact_info.html')
+    if request.method == 'GET':
+        return render_template('contact_info.html')
+
+@app.route('/images/HeadsTails.jpg', methods=['GET', 'POST'])
+def main_menu():
+    if request.method == 'GET':
+        return render_template('HeadsTails.jpg')
 
 
 @app.route('/dashboard/<name>/<password>')
@@ -126,7 +134,6 @@ if __name__ == '__main__':
     port = 8000
 
     app.run(debug=False, host=host, port=port)
-
 
 
 # while true for the websocket, only for the websocket, not for htpp requests

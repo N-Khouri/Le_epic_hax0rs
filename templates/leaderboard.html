@@ -5,16 +5,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE-edge">
   <meta name="viewport" content="width= , initial-scale=1.0">
   <title> LEADERBOARD </title>
-  <link rel="stylesheet" type="text/css" href="style.css">
-   <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
- <div class="leaderboard">
-    <a href= "main_menu.html">
+    <a href= "main_menu">
         <button class="exitGame"> Exit to main menu</button>
     </a>
+    <div class="leaderboard">
     <!-- Gurleen: Change the Battleship image -->
-    <img src="TicTacToe.jpg" class="leaderboard-image-theme">
+    <img src="images/HeadsTails.jpg" class="leaderboard-image-theme">
     <div class="leaderboard-title">
         <h2> Players with the most wins</h2>
         <input class="leaderboard-search" placeholder="SEARCH PLAYER" id="search" oninput="search()">
