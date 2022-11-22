@@ -17,10 +17,10 @@ def index():
     else:
         return render_template('login.html')
 
-@app.route("/TicTacToe", methods=['POST', 'GET'])
+@app.route("/HeadsTails", methods=['POST', 'GET'])
 def game():
     if request.method == 'GET':
-        return render_template('TicTacToe.html') 
+        return render_template('HeadsTails.html') 
     else:
         return render_template('login.html')
 
