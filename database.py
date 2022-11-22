@@ -28,6 +28,11 @@ def get_user_password(username):
     return users.find_one({"username": username})["password"]
 
 
+def get_games(username):
+    return users.find_one({"username": username})["total games"]
+
+def get_score(username):
+    return users.find_one({"username": username})["score"]
 #########################################################################################################################################
 
 
@@ -39,7 +44,7 @@ def insert_user(username, password):
         return 0  # "An account with the inputted username already exists. Please log-in with that account."
     else:
         hash_password = passwordSec.user_hash(username, password)
-        users.insert_one({"username": username, "password": hash_password, "score": 0})
+        users.insert_one({"username": username, "password": hash_password, "score": 0, "total games": 0})
         return 1  # "An account with the username " + username + " has been successfully created."
 
 
@@ -76,6 +81,7 @@ def clear_db():  # for testing purposes only
     database.drop_collection(chat)
     database.drop_collection(salt)
     database.drop_collection(active_users)
+
 
 def print_users_db():
     cur = users.find()
