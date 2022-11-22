@@ -30,7 +30,7 @@ def render_leaderboard():
         return render_template('leaderboard.html')
 
 @app.route('/main_menu', methods=['GET', 'POST'])
-def main_menu():
+def menu():
     if request.method == 'GET':
         return render_template('main_menu.html')
 
