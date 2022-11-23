@@ -61,17 +61,17 @@ def insert_user(username, password):
 
 
 # Call this function to get all the users' usernames.
-def all_users():
+def all_users_username():
     list_to_json = list()
     collection = list(users.find({}))
     for i in collection:
         list_to_json.append(i["username"])
-    return json.dumps(list_to_json)
+    return list_to_json
 
 ############################# testing some shit ######################################################
 
 #call this function to get all the users' information
-def all_players_names():
+def all_users():
     list_to_json = list()
     collection = list(users.find({}))
     for i in collection:
@@ -91,7 +91,9 @@ def add_score(username, decider):
 # TLDR -> Call this function to sort the leaderboard.
 # Functionality -> It gets all the users and turns them into python readable, drops the current collection in the leaderboard, adds the new sorted list into the collection.
 def update_leaderboard():
-    db_users = json.loads(all_users())
+    db_users = all_users()
+    print("all users")
+    print(db_users)
     readable = sorted(db_users, key=lambda key: key["score"])
     readable = readable[:10]
     return readable

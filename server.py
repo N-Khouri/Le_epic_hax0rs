@@ -12,18 +12,19 @@ async_mode = None
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
 
+total_logged_players = []
 
 @app.route("/", methods=['POST', 'GET'])
 def index():
     if request.method == 'GET':
-        return render_template('index.html') 
+        return render_template('index.html')
     else:
         return render_template('login.html')
 
 @app.route("/HeadsTails", methods=['POST', 'GET'])
 def game():
     if request.method == 'GET':
-        return render_template('HeadsTails.html') 
+        return render_template('HeadsTails.html')
     else:
         return render_template('login.html')
 
@@ -31,8 +32,9 @@ def game():
 
 @app.route("/leaderboard", methods=['GET'])
 def render_leaderboard():
-    if request.method == 'GET':        
-        all_players = database.all_players_names()
+    if request.method == 'GET':
+        database.update_leaderboard()
+        all_players = database.all_users()
         return render_template('leaderboard.html', players= all_players)
 
 
@@ -138,7 +140,7 @@ def dashboard(name, password):
 
 @socketio.on('message')
 def handle_message(data):
-    
+
     print(data)
     # if data == "heads":
     #     print("heads")
@@ -148,9 +150,21 @@ def handle_message(data):
     #     print("ERROR !@#@!#@!#")
         # print('received message is ' + data)
 
+@socketio.on('connect')
+def lobby():
+    global total_logged_players
+    # total_logged_players += 1
+
+@socketio.on('disconnect')
+def decrement_logged_players():
+    global total_logged_players
+    # total_logged_players -= 1
+    print("total logged player when disconnection occurs: " + str(total_logged_players))
+
 
 @socketio.on('player')
 def handle_message(data):
+    print('player message')
     print(data)
     print(data.get("choice",""))
     print("end")
