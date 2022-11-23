@@ -31,9 +31,21 @@ def get_user_password(username):
 def get_games(username):
     return users.find_one({"username": username})["total games"]
 
+
 def get_score(username):
     return users.find_one({"username": username})["score"]
+
+
 #########################################################################################################################################
+
+def increment_score(username):
+    new_score = users.find_one({"username": username})["score"] + 1
+    users.update_one({"username": username}, {'$set': {"score": new_score}})
+
+
+def increment_games(username):
+    new_total_games = users.find_one({"username": username})["total games"] + 1
+    users.update_one({"username": username}, {'$set': {"total games": new_total_games}})
 
 
 # TLDR -> Inserts a user if the user doesn't exist.
