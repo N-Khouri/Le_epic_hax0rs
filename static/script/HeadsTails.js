@@ -1,5 +1,6 @@
 "use strict";
 
+var socket = io();
 // const heads = 1;
 // const tails = 0;
 
@@ -38,12 +39,14 @@ const womp = new Audio('static/sounds/womp.mp3')
 // Sets players choice to heads
 function headsFunction(){
     if (flipStarted == 0){
+    socket.emit("test", "hello")
     document.getElementById("choice").innerHTML = "You chose: Heads";
     playerChoice = heads;
     startFlipTimer();
     }
     else{return;}
 }
+
 
 // Sets players choice to tails
 function tailsFunction(){

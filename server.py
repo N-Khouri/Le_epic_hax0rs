@@ -113,7 +113,9 @@ def dashboard(name, password):
     output2 = 'your password is %s' % password
     return output1 + ", " + output2
 
-
+@socketio.on('test')
+def handle_message(data):
+    print('received message is ' + data)
 
 if __name__ == '__main__':
     host = "0.0.0.0"

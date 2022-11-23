@@ -5,9 +5,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>HEADS AND TAILS</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-    <script type="text/javascript" charset="utf-8">
-        var socket = io();
-    </script>
 </head>
 <body>
     <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
@@ -18,7 +15,7 @@
     <p id="timerNumber"> Timer:0 </p>
     <p class="LUL"> ^ this man does NOT know how to handle truncation errors ^</p>
     <progress class="timer" id="timer" value="5" max="5"></progress>
-    <p class="choice" id="choice"> You chose: </p>
+    <p class="choice" id="choice"> You chose: {{ playerChoice }}</p>
     <p class="choice" id="opponentChoice"> Opponent chose: </p>
     <p class="outcome" id="outcome"> You have: </p>
     <div class="board">
