@@ -1,7 +1,8 @@
 pymongo
 flask
 flask-socketio
-#flask_sock
+flask_sock
+
 #socketio
 # hashlib
 # os
