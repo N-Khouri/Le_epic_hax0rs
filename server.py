@@ -13,8 +13,6 @@ app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
 
 
-
-
 @app.route("/", methods=['POST', 'GET'])
 def index():
     if request.method == 'GET':

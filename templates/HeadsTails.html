@@ -10,11 +10,6 @@
     </script>
 </head>
 <body>
-    <script type="text/javascript">
-        var socket = io();
-        socket.on('connect', function() {
-        socket.emit('my event', {data: 'I\'m connected!'});
-    }); </script>
     <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
     <a href= "main_menu">
         <button class="exitGame" onclick="amogus()"> Exit to main menu</button>
