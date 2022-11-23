@@ -22,6 +22,7 @@ var socket = io();
 //  Implement score functionality
 
 // Time left to choose
+
 var timeLeft = 5;
 var flipLockout = 0;
 var flipStarted = 0;
@@ -39,7 +40,7 @@ const womp = new Audio('static/sounds/womp.mp3')
 // Sets players choice to heads
 function headsFunction(){
     if (flipStarted == 0){
-    socket.emit("test", "hello")
+    socket.emit("player", {data: socket.id, "choice": "heads"})
     document.getElementById("choice").innerHTML = "You chose: Heads";
     playerChoice = heads;
     startFlipTimer();
@@ -51,6 +52,7 @@ function headsFunction(){
 // Sets players choice to tails
 function tailsFunction(){
     if (flipStarted == 0){
+    socket.emit("player", {data: socket.id, "choice": "tails"})
     document.getElementById("choice").innerHTML = "You chose: Tails";
     playerChoice = tails;
     startFlipTimer();

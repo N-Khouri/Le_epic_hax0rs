@@ -113,9 +113,42 @@ def dashboard(name, password):
     output2 = 'your password is %s' % password
     return output1 + ", " + output2
 
-@socketio.on('test')
+
+# // server-side
+# @io.on("connection", (socket) => {
+#   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+# });
+
+# // client-side
+# socket.on("connect", () => {
+#   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+# });
+
+# socket.on("disconnect", () => {
+#   console.log(socket.id); // undefined
+# });
+
+
+
+@socketio.on('message')
 def handle_message(data):
-    print('received message is ' + data)
+    
+    print(data)
+    # if data == "heads":
+    #     print("heads")
+    # elif data == "tails":
+    #     print("tails")
+    # else:
+    #     print("ERROR !@#@!#@!#")
+        # print('received message is ' + data)
+
+
+@socketio.on('player')
+def handle_message(data):
+    print(data)
+    print(data.get("choice",""))
+    print("end")
+
 
 if __name__ == '__main__':
     host = "0.0.0.0"
