@@ -8,9 +8,13 @@ import database
 import passwordSec
 
 app = Flask(__name__)
-app.secret_key["SECRET_KEY"] = 'key'
-
+app.config["SECRET_KEY"] = 'key'
 sock = SocketIO(app)
+
+
+@sock.on('connect')
+def test_connection():
+    print("connected")
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -33,6 +37,7 @@ def game():
 def render_leaderboard():
     if request.method == 'GET':
         return render_template('leaderboard.html')
+
 
 @app.route('/main_menu', methods=['GET', 'POST'])
 def menu():
@@ -100,22 +105,25 @@ def empty_users():
         database.clear_db()
     return "DATABASE WAS DESTROYED"
 
+
 @app.route('/about/', methods=['GET', 'POST'])
 def about():
     if request.method == 'GET':
         return render_template('about.html')
 
 
-@app.route('/contact_info/',  methods=['GET', 'POST'])
+@app.route('/contact_info/', methods=['GET', 'POST'])
 def contact_info():
     if request.method == 'GET':
         return render_template('contact_info.html')
+
 
 @app.route('/dashboard/<name>/<password>')
 def dashboard(name, password):
     output1 = 'welcome %s' % name
     output2 = 'your password is %s' % password
     return output1 + ", " + output2
+
 
 # @sock.route("/game")
 # def echo(socket):
@@ -127,9 +135,8 @@ if __name__ == '__main__':
     host = "0.0.0.0"
     port = 8000
 
-    sock.run(app, host, port)
-
+    sock.run(app, host, port, allow_unsafe_werkzeug=True)
 
 # while true for the websocket, only for the websocket, not for htpp requests
-#example https://github.com/miguelgrinberg/flask-sock/blob/main/examples/echo-gevent.py
+# example https://github.com/miguelgrinberg/flask-sock/blob/main/examples/echo-gevent.py
 # sock for websockt, app.route is an http flask route, only for http req
