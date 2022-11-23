@@ -179,7 +179,7 @@ table td{
 
 tbody tr{
     box-shadow: 0 2px white;
-    border-radius: 9px;
+    border-radius: 0px;
 }
 
 tbody tr:hover{
@@ -187,7 +187,12 @@ tbody tr:hover{
     transition: .2s ease-in-out;
 }
 
-#tbody tr:nth-child(even){
+tbody tr:nth-child(even){
+    margin-top: 2em;
+    width: 50em;
+    color: var(--clr-neon-black);
+    margin-left: auto;
+    margin-right: auto;
     background-color: var(--clr-neon-pink);
 }
 

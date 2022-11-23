@@ -22,6 +22,7 @@
             <thead>
                 <tr>
                 <td></td>
+                <td>RANK</td>
                 <td>PLAYER NAME</td>
                 <td>SCORES</td>
                 <td>TOTAL GAMES</td>
@@ -29,37 +30,17 @@
             </thead>
 
             <tbody>
-                <tr>
-                <!-- INSERT INFOR FROM DATABASE -->
-                <th>1</th>
-                <th><p>Epic Hax0rs</p></th>
-                <th>10</th>
-                <th>11</th>
-                </tr>
-
-                <tr>
-                <!-- INSERT INFOR FROM DATABASE -->
-                <th>2</th>
-                <th><p>WTF</p></th>
-                <th>5</th>
-                <th>7</th>
-                </tr>
-
-                <tr>
-                <!-- INSERT INFOR FROM DATABASE -->
-                <th>3</th>
-                <th><p>trial</p></th>
-                <th>0</th>
-                <th>10</th>
-                </tr>
-
-                <tr>
-                    <!-- INSERT INFOR FROM DATABASE -->
-                <th>4</th>
-                <th><p>works</p></th>
-                <th>0</th>
-                <th>10</th>
-                </tr>
+                {% for player in players%}
+                    <div class="player">
+                        <tr>
+                        <td></td>
+                        <td>N/A</td>
+                        <td>{{player['username']}}</td>
+                        <td>{{player['score']}}</td>
+                        <td>{{player['total games']}}</td>
+                        </tr>
+                    </div>
+                {% endfor%}
             
             </tbody>
         </table>

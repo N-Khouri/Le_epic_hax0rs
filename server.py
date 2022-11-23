@@ -27,10 +27,26 @@ def game():
     else:
         return render_template('login.html')
 
+################################## TESTING POPULATING THE LEADERBOARD ####################################
+
 @app.route("/leaderboard", methods=['GET'])
 def render_leaderboard():
+    if request.method == 'GET':        
+        all_players = database.all_players_names()
+        return render_template('leaderboard.html', players= all_players)
+
+
+##########################################################################################################
+
+@app.route("/about", methods=['Get'])
+def about():
     if request.method == 'GET':
-        return render_template('leaderboard.html')
+        return render_template('about.html')
+
+@app.route("/contactInfo", methods=['GET'])
+def contactInfo():
+    if request.method == 'GET':
+        return render_template('contactInfo.html')
 
 @app.route('/main_menu', methods=['GET', 'POST'])
 def main_menu():
@@ -96,16 +112,6 @@ def empty_users():
         database.clear_db()
     return "DATABASE WAS DESTROYED"
 
-@app.route('/about/', methods=['GET', 'POST'])
-def about():
-    if request.method == 'GET':
-        return render_template('about.html')
-
-
-@app.route('/contact_info/',  methods=['GET', 'POST'])
-def contact_info():
-    if request.method == 'GET':
-        return render_template('contact_info.html')
 
 @app.route('/dashboard/<name>/<password>')
 def dashboard(name, password):

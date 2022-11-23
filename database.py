@@ -68,6 +68,17 @@ def all_users():
         list_to_json.append(i["username"])
     return json.dumps(list_to_json)
 
+############################# testing some shit ######################################################
+
+#call this function to get all the users' information
+def all_players_names():
+    list_to_json = list()
+    collection = list(users.find({}))
+    for i in collection:
+        list_to_json.append(i)
+    return list_to_json
+
+######################################################################################################
 
 # Call this function to increment a user's score by 1.
 def add_score(username, decider):
