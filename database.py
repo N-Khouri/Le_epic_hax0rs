@@ -2,15 +2,27 @@ import json
 import passwordSec
 
 from pymongo import MongoClient
+import random
 
 mongo_client = MongoClient("mongo")
-database = mongo_client["battle_ships"]
+database = mongo_client["flip"]
 users = database["users"]
 active_users = database["active_users"]
 chat = database["chat"]
 salt = database["salt"]
 lobbies = database["lobbies"]
 
+
+def insert_lobby():
+    randomDict = str(random.randint(1, 1000))
+    lobbies.insert_one({"lobby": randomDict})
+
+def get_lobbies():
+    all_lobbies = lobbies.find({})
+    to_return = []
+    for i in all_lobbies:
+        to_return.append(i["lobby"])
+    return to_return
 
 ####################################### Verification Usage Only. Don't play with these functions. #######################################
 def insert_salt(username, _salt):
@@ -100,6 +112,7 @@ def clear_db():  # for testing purposes only
     database.drop_collection(chat)
     database.drop_collection(salt)
     database.drop_collection(active_users)
+    database.drop_collection(lobbies)
 
 
 def print_users_db():

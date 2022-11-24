@@ -61,7 +61,7 @@ def contactInfo():
 def main_menu():
     if request.method == 'GET':
         global username
-        return render_template('main_menu.html',user=list((database.lobbies.find(),{'_id': False})), playername = username)
+        return render_template('main_menu.html',user=database.get_lobbies(), playername = username)
 
 
 
@@ -136,9 +136,10 @@ def dashboard(name, password):
 @app.route('/Create_lobby', methods=['GET', 'POST'])
 def create_lobby():
     if request.method == 'GET':
-        randomDict = {"lobby": str(random.randint(1,1000))}
-        database.lobbies.insert_one(randomDict)
-        return render_template('loading_screen.html',user=list((database.lobbies.find({}, {'_id':False}))))
+        database.insert_lobby()
+        print("lobbies")
+        print(database.get_lobbies())
+        return render_template('loading_screen.html', user=database.get_lobbies())
     # elif request.method == 'POST':
     #     database.lobbies.delete_one({})
     #     return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
