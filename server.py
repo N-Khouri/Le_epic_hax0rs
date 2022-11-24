@@ -9,11 +9,13 @@ import database
 import passwordSec
 
 
+
 async_mode = None
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
 
 total_logged_players = []
+username =''
 
 @app.route("/", methods=['POST', 'GET'])
 def index():
@@ -40,7 +42,10 @@ def render_leaderboard():
 @app.route("/playerProfile", methods=["GET"])
 def playerProfile():
     if request.method == 'GET':
-        return render_template('playerProfile.html')
+        global username
+        playerScore = database.get_score(username)
+        playerTotal = database.get_games(username)
+        return render_template('playerProfile.html', playername= username, score = playerScore, total = playerTotal)
 
 @app.route("/about", methods=['Get'])
 def about():
@@ -55,7 +60,8 @@ def contactInfo():
 @app.route('/main_menu', methods=['GET', 'POST'])
 def main_menu():
     if request.method == 'GET':
-        return render_template('main_menu.html',user=list((database.lobbies.find(),{'_id': False})))
+        global username
+        return render_template('main_menu.html',user=list((database.lobbies.find(),{'_id': False})), playername = username)
 
 
 
@@ -74,6 +80,10 @@ def login():
             input_username = request.form['username']
             input_password = request.form['password']
 
+            
+            global username 
+            username = input_username
+
             if request.form.__contains__("register"):
                 print(type(input_password))
                 print(type(input_username))
@@ -85,17 +95,13 @@ def login():
                     return render_template('failed_register.html')
 
                 else:
-                    return render_template('main_menu.html')
+                    return render_template('main_menu.html', playername = username)
 
             elif request.form.__contains__("login"):
                 get_salt = database.get_salt(input_username)
                 if get_salt != 0:
                     verify = passwordSec.verify(input_username, input_password)
                     if verify == 1:
-                        username = input_username
-                        # playerScore = database.get_score(input_username)
-                        # playerTotal = database.get_games(input_username)
-                        # render_template('playerProfile.html', playername= username, score = playerScore, total = playerTotal)
                         return render_template('main_menu.html', playername = username)
                     elif isinstance(verify, str):
                         print("Username does not exist.")

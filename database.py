@@ -71,11 +71,8 @@ def all_users_username():
 
 #call this function to get all the users' information
 def all_users():
-    list_to_json = list()
     collection = list(users.find({}))
-    for i in collection:
-        list_to_json.append(i)
-    return list_to_json
+    return collection
 
 # Call this function to increment a user's score by 1.
 def add_score(username, decider):
