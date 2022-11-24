@@ -161,7 +161,7 @@ def waitingLobby():
         if found_lobby_bool:
             return render_template('loading_screen.html')
         else:
-            return render_template('main_menu.html') #render into html "lobby was not found"
+            return render_template('main_menu.html', lobbyDNE = "lobby was not found") #render into html "lobby was not found"
 
 
 
