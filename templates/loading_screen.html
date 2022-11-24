@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8">
     <title> Main Menu </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">]
+    <script type="text/javascript">const socket = io();</script>
 </head>
 <body>
     <div class = "BasicMenu">
-    <p>lobby name: a</p>
+    <p class="lobby" id={{lobby_name}}>lobby name: {{lobby_name}}</p>
     <p>please wait for other user to join</p>
     </div>
 </body>

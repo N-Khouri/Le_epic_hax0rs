@@ -13,9 +13,8 @@ salt = database["salt"]
 lobbies = database["lobbies"]
 
 
-def insert_lobby():
-    randomDict = str(random.randint(1, 1000))
-    lobbies.insert_one({"lobby": randomDict})
+def insert_lobby(lobby_number):
+    lobbies.insert_one({"lobby": lobby_number})
 
 def get_lobbies():
     all_lobbies = lobbies.find({})
