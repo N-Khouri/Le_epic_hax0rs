@@ -138,10 +138,10 @@ def create_lobby():
     if request.method == 'GET':
         randomDict = {"lobby": str(random.randint(1,1000))}
         database.lobbies.insert_one(randomDict)
-        return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
-    elif request.method == 'POST':
-        database.lobbies.delete_one({})
-        return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
+        return render_template('loading_screen.html',user=list((database.lobbies.find({}, {'_id':False}))))
+    # elif request.method == 'POST':
+    #     database.lobbies.delete_one({})
+    #     return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
 
 @app.route("/loading_screen", methods=['POST'])
 def waitingLobby():
