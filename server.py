@@ -7,7 +7,7 @@ from flask_socketio import SocketIO
 import random
 import database
 import passwordSec
-
+import json
 
 
 async_mode = None
@@ -15,7 +15,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
 
 total_logged_players = []
-username =''
+username = ''
 
 @app.route("/", methods=['POST', 'GET'])
 def index():
@@ -146,7 +146,22 @@ def create_lobby():
 @app.route("/loading_screen", methods=['POST'])
 def waitingLobby():
     if request.method == 'POST':
-        return render_template('loading_screen.html')
+        lobby_name = request.form['join_room']
+
+    #  lobby db in this format{'_id': ObjectId('637fe95a9e3e33b375145bf2'), 'lobby': '783'}
+        get_lobbys = database.lobbies.find()
+        lobby_list = list(get_lobbys)
+
+        found_lobby_bool = False
+        for line in lobby_list:
+            get_lobby_id = line.get("lobby")
+            if get_lobby_id == lobby_name:
+                found_lobby_bool = True
+
+        if found_lobby_bool:
+            return render_template('loading_screen.html')
+        else:
+            return render_template('main_menu.html') #render into html "lobby was not found"
 
 
 

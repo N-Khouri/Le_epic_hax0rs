@@ -39,7 +39,7 @@ const womp = new Audio('static/sounds/womp.mp3')
 
 // Sets players choice to heads
 function headsFunction(){
-    if (flipStarted == 0){
+    if (flipStarted === 0){
     socket.emit("player", {data: socket.id, "choice": "heads"})
     document.getElementById("choice").innerHTML = "You chose: Heads";
     playerChoice = heads;
@@ -51,13 +51,13 @@ function headsFunction(){
 
 // Sets players choice to tails
 function tailsFunction(){
-    if (flipStarted == 0){
+    if (flipStarted === 0){
     socket.emit("player", {data: socket.id, "choice": "tails"})
     document.getElementById("choice").innerHTML = "You chose: Tails";
     playerChoice = tails;
     startFlipTimer();
     }
-    else{return;}
+    else{}
 }
 
 // Starts countdown for both players
@@ -77,7 +77,7 @@ function startFlipTimer(){
     flipLockout = 1;
     setTimeout(flipCoin, 5000);
     }
-    else{return;}
+    else{}
 }
 
 // Helper function for setting color of coin
@@ -117,7 +117,7 @@ function flipCoin(){
 
 // Checks win condition
 function checkWinner(){
-    if (playerChoice == outcome){
+    if (playerChoice === outcome){
         document.getElementById("outcome").innerHTML = "You have: WON :D";
         AUGH.play();
     }
