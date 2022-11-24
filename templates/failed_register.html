@@ -1,8 +1,18 @@
 <!DOCTYPE html>
 <html>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>ERROR</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
 
-<p><b>An account with this username already exists</b></p>
+    <body>
+        <a href="login">
+            <button class="exitGame"> Exit to Login</button>
+        </a>
 
-</body>
+        <div class = "BasicMenu">
+            <p><b>An account with this username already exists</b></p>
+        </div>
+    </body>
 </html>

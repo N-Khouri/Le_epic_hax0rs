@@ -1,8 +1,18 @@
 <!DOCTYPE html>
 <html>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>ERROR</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    
+    <body>
+        <a href="login">
+            <button class="exitGame"> Exit to Login</button>
+        </a>
 
-<p><b>Username or Password was incorrect</b></p>
-
-</body>
+        <div class = "BasicMenu">
+        <p><b>Username or Password was incorrect</b></p>
+        </div>
+    </body>
 </html>
