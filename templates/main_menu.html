@@ -3,43 +3,43 @@
 <head>
     <meta charset="utf-8">
     <title> Main Menu </title>
-    <link rel="stylesheet" type="text/css" href="\static\css\style.css">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="\static\css\style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Gurleen : Fix the CSS for Main Menu to make it better looking  -->
 </head>
 <body>
 
-    <div>
-        <a href="HeadsTails" class="menu-button">Play Game</a>
-    </div> -->
-    <div>
-        <a href="Create_lobby" class="menu-button">Create a Lobby</a>
-    </div>
+    <div class="center">
+            WELCOME {{playername}}
 
-    <form id="join" method="POST" action='#'>
-        <input type="text" name="join_room" id="join_room" placeholder="Room Name">
-        <input type="submit" value="Join Room">
-    </form>
+        <div>
+            <a href="HeadsTails" class="mainMenu">Play Game</a>
+        </div>
 
-    <div>
-        <a href="Create_lobby" class="menu-button">Create a Lobby</a>
-    </div>
+        <div>
+            <a href="Create_lobby" class="mainMenu">Create a Lobby</a>
+        </div>
 
-    <form id="join" method="POST" action='#' class="menu-button">
-        <input type="text" name="join_room" id="join_room" placeholder="Room Name">
-        <input type="submit" value="Join Room">
-    </form>
+        <form id="join" method="POST" action='loading_screen' class="mainMenu">
+            <input type="text" name="join_room" id="join_room" placeholder="Room Name">
+            <input type="submit" value="Join Room">
+        </form>
 
-    <div>
-        <a href="leaderboard" class="menu-button">Leaderboard</a>
-    </div>
+        <div>
+            <a href="leaderboard" class="mainMenu">Leaderboard</a>
+        </div>
 
-    <div>
-        <a href="contact_info" class="menu-button">Contact Info</a>
-    </div>
+        <div>
+            <a href="contactInfo" class="mainMenu">Contact Info</a>
+        </div>
 
-    <div>
-        <a href="about" class="menu-button">About</a>
+        <div>
+            <a href="about" class="mainMenu">About</a>
+        </div>
+
+        <div>
+            <a href="playerProfile" class="mainMenu">Player Profile</a>
+        </div>
     </div>
 </body>
 </html>

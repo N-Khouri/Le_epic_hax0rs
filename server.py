@@ -143,6 +143,13 @@ def create_lobby():
         database.lobbies.delete_one({})
         return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
 
+@app.route("/loading_screen", methods=['POST'])
+def waitingLobby():
+    if request.method == 'POST':
+        return render_template('loading_screen.html')
+
+
+
 # list(self.db.users_collection.find({}, {'_id': False}))
 # // server-side
 # @io.on("connection", (socket) => {

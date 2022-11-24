@@ -1,15 +1,25 @@
 <!DOCTYPE html>
-<head>Player Information:</head>
-<hr>
+<html>
+<head>
+    <title>PLAYER INFORMATION</title>
+ <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
 <body>
     <a href="main_menu">
-        <button class="exitGame"> Exit to main menu</button>
+    <button class="exitGame"> Exit to main menu</button>
     </a>
 
-    <div class="player">
+    <div class = "BasicMenu">
+        <h1><u>PLAYER INFORMATION</u></h1>
+        
+        <div class="player">
         <p>PLAYER NAME: {{playername}} </p>
         <p>PLAYER SCORE: {{score}}</p>
         <p>GAMES PLAYED: {{total}}</p>
+        </div>
     </div>
     
 </body>
+</html>
