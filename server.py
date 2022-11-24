@@ -15,7 +15,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
 
 total_logged_players = []
-username =''
+username = ''
 
 @app.route("/", methods=['POST', 'GET'])
 def index():
