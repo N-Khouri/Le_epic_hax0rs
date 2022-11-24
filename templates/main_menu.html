@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- <div>
+    <div>
         <a href="HeadsTails" class="menu-button">Play Game</a>
     </div> -->
     <div>
@@ -17,6 +17,15 @@
     </div>
 
     <form id="join" method="POST" action='#'>
+        <input type="text" name="join_room" id="join_room" placeholder="Room Name">
+        <input type="submit" value="Join Room">
+    </form>
+
+    <div>
+        <a href="Create_lobby" class="menu-button">Create a Lobby</a>
+    </div>
+
+    <form id="join" method="POST" action='#' class="menu-button">
         <input type="text" name="join_room" id="join_room" placeholder="Room Name">
         <input type="submit" value="Join Room">
     </form>
@@ -32,17 +41,5 @@
     <div>
         <a href="about" class="menu-button">About</a>
     </div>
-
-    <div>
-        <a href="about" class="menu-button">Own Profile</a>
-    </div>
-
-    {% block body %}
-    <div class="lobby">
-        <h1>Lobbies to join</h1>
-        <p> {{user}} </p>
-    </div>
-    {% endblock %}
-    
 </body>
 </html>

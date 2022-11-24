@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>Player Information:</head>
+<hr>
+<body>
+    <a href="main_menu">
+        <button class="exitGame"> Exit to main menu</button>
+    </a>
+
+    {% for player in players%}
+    <div class="player">
+        <p>PLAYER NAME: {{playername}} </p>
+        <p>PLAYER SCORE: {{score}}</p>
+        <p>GAMES PLAYED: {{total}}</p>
+    </div>
+    {% endfor%}
+    
+</body>

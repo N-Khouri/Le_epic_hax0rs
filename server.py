@@ -29,7 +29,6 @@ def game():
     else:
         return render_template('login.html')
 
-################################## TESTING POPULATING THE LEADERBOARD ####################################
 
 @app.route("/leaderboard", methods=['GET'])
 def render_leaderboard():
@@ -38,8 +37,10 @@ def render_leaderboard():
         all_players = database.all_users()
         return render_template('leaderboard.html', players= all_players)
 
-
-##########################################################################################################
+@app.route("/playerProfile", methods=["GET"])
+def playerProfile():
+    if request.method == 'GET':
+        return render_template('playerProfile.html')
 
 @app.route("/about", methods=['Get'])
 def about():
@@ -91,7 +92,11 @@ def login():
                 if get_salt != 0:
                     verify = passwordSec.verify(input_username, input_password)
                     if verify == 1:
-                        return render_template('main_menu.html')
+                        username = input_username
+                        # playerScore = database.get_score(input_username)
+                        # playerTotal = database.get_games(input_username)
+                        # render_template('playerProfile.html', playername= username, score = playerScore, total = playerTotal)
+                        return render_template('main_menu.html', playername = username)
                     elif isinstance(verify, str):
                         print("Username does not exist.")
                         return render_template('does_not_exist.html')
