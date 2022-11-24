@@ -337,3 +337,7 @@ tbody tr:nth-child(even){
     font-family: "Comic Sans MS";
     -webkit-transform: rotate(1.5deg) translate(0px,0px);
 }
+
+.lobby{
+    float: right;
+}

@@ -4,6 +4,7 @@ from flask import Flask, redirect, url_for, request
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 
+import random
 import database
 import passwordSec
 
@@ -53,7 +54,7 @@ def contactInfo():
 @app.route('/main_menu', methods=['GET', 'POST'])
 def main_menu():
     if request.method == 'GET':
-        return render_template('main_menu.html')
+        return render_template('main_menu.html',user=list((database.lobbies.find(),{'_id': False})))
 
 
 
@@ -121,7 +122,17 @@ def dashboard(name, password):
     output2 = 'your password is %s' % password
     return output1 + ", " + output2
 
+@app.route('/Create_lobby', methods=['GET', 'POST'])
+def create_lobby():
+    if request.method == 'GET':
+        randomDict = {"lobby": str(random.randint(1,1000))}
+        database.lobbies.insert_one(randomDict)
+        return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
+    elif request.method == 'POST':
+        database.lobbies.delete_one({})
+        return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
 
+# list(self.db.users_collection.find({}, {'_id': False}))
 # // server-side
 # @io.on("connection", (socket) => {
 #   console.log(socket.id); // x8WIv7-mJelg7on_ALbx

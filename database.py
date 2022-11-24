@@ -9,6 +9,7 @@ users = database["users"]
 active_users = database["active_users"]
 chat = database["chat"]
 salt = database["salt"]
+lobbies = database["lobbies"]
 
 
 ####################################### Verification Usage Only. Don't play with these functions. #######################################
