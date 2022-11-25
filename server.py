@@ -226,15 +226,11 @@ def lobby(roomid):
 
 @socketio.on('join')
 def join_lobby(id):
-    users_in_room = rooms(id)
-    if len(users_in_room) < 2:
-       join_room(id)
-       print("you joined the room")
-    else:
-        print("room is full")
-        return render_template('main_menu.html', lobbyDNE="lobby is full")
- 
-    # 
+    print("joined room")
+    print(id)
+    join_room(id)
+    print(rooms())
+
 # @socketio.on('disconnect')
 # def decrement_logged_players():
 #     global total_logged_players
