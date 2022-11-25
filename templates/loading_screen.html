@@ -7,15 +7,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-        const conn = io();
+        const socket = io();
         const room_id = "{{lobby_name}}";
-        conn.emit("join", room_id)
+        socket.emit("join", room_id)
+        socket.emit("getHTMLPage", (data)=>{
+        tagID = document.getElementById('gameContainer');
+        tagID.innerHTML = data;
+    });
     </script>
 </head>
 <body>
     <div class = "BasicMenu">
     <p>lobby name: {{lobby_name}}</p>
     <p>please wait for other user to join</p>
+    </div>
+
+    <div id="gameContainer">
+
     </div>
 </body>
 </html>

@@ -231,6 +231,13 @@ def join_lobby(id):
     join_room(id)
     print(rooms())
 
+@socketio.on('getHTMLPage')
+def sendHTML():
+    with open("templates/HeadsTails.html") as file:
+        template = file.read()
+        print(template)
+        send(template)
+        file.close()
 # @socketio.on('disconnect')
 # def decrement_logged_players():
 #     global total_logged_players
