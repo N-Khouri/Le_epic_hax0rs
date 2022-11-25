@@ -1,8 +1,9 @@
 import datetime
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from flask import Flask, redirect, url_for, request
 from flask import Flask, render_template
 from flask_socketio import SocketIO
+from flask_session import Session
 
 import random
 import database
@@ -12,6 +13,9 @@ import json
 async_mode = None
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 username = ''
 
@@ -43,10 +47,9 @@ def render_leaderboard():
 @app.route("/playerProfile", methods=["GET"])
 def playerProfile():
     if request.method == 'GET':
-        global username
-        playerScore = database.get_score(username)
-        playerTotal = database.get_games(username)
-        return render_template('playerProfile.html', playername=username, score=playerScore, total=playerTotal)
+        playerScore = database.get_score(session["username"])
+        playerTotal = database.get_games(session["username"])
+        return render_template('playerProfile.html', score=playerScore, total=playerTotal)
 
 
 @app.route("/about", methods=['Get'])
@@ -65,13 +68,18 @@ def contactInfo():
 def main_menu():
     if request.method == 'GET':
         global username
-        return render_template('main_menu.html', user=database.get_lobbies(), playername=username)
+        return render_template('main_menu.html', user=database.get_lobbies())
 
 
 @app.route('/nuke', methods=['GET', 'POST'])
 def nuke():
     database.clear_db()
     return redirect(url_for('login'))
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    session["username"]=None
+    return render_template('login.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -84,8 +92,7 @@ def login():
         input_username = request.form['username']
         input_password = request.form['password']
 
-        global username
-        username = input_username
+        session["username"] = input_username
 
         if request.form.__contains__("register"):
             print(type(input_password))
@@ -98,14 +105,14 @@ def login():
                 return render_template('failed_register.html')
 
             else:
-                return render_template('main_menu.html', playername=username)
+                return render_template('main_menu.html')
 
         elif request.form.__contains__("login"):
             get_salt = database.get_salt(input_username)
             if get_salt != 0:
                 verify = passwordSec.verify(input_username, input_password)
                 if verify == 1:
-                    return render_template('main_menu.html', playername=username)
+                    return render_template('main_menu.html')
                 elif isinstance(verify, str):
                     print("Username does not exist.")
                     return render_template('does_not_exist.html')

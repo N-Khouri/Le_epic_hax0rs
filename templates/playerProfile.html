@@ -14,11 +14,20 @@
     <div class = "BasicMenu">
         <h1><u>PLAYER INFORMATION</u></h1>
         
+        {% block y %}
         <div class="player">
-        <p>PLAYER NAME: {{playername}} </p>
+        {% if session.username %}
+        <p>PLAYER NAME: {{session.username}} </p>
         <p>PLAYER SCORE: {{score}}</p>
         <p>GAMES PLAYED: {{total}}</p>
+
+        {% else %}
+        Invalid Player<a href="login" class="mainMenu">Login</a>
+
+        {% endif %}
         </div>
+        {% endblock %}
+
     </div>
     
 </body>
