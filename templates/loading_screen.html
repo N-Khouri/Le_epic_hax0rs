@@ -9,9 +9,7 @@
     <script type="text/javascript">
         const conn = io();
         const room_id = "{{lobby_name}}";
-        conn.on("connect", (roomid) => {
-            console.log(roomid)
-        });
+        conn.emit("join", room_id)
     </script>
 </head>
 <body>

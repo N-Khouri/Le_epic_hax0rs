@@ -2,7 +2,8 @@ import datetime
 from flask import Flask, render_template, request
 from flask import Flask, redirect, url_for, request
 from flask import Flask, render_template
-from flask_socketio import SocketIO
+from flask_socketio import *
+
 
 import random
 import database
@@ -13,7 +14,7 @@ async_mode = None
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
 
-username = ''
+all_rooms = []
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -199,18 +200,26 @@ def handle_message(data):
     # print('received message is ' + data)
 
 
-@socketio.on('connect')
+@socketio.on('create_lobby')
 def lobby(roomid):
     print("connected")
     print(roomid)
+    join_room(roomid)
+    global all_rooms
+    all_rooms.insert(0, roomid)
+    print("all rooms")
+    print(all_rooms)
     # total_logged_players += 1
 
+@socketio.on('join')
+def join_lobby(id):
+    join_room(id)
 
-@socketio.on('disconnect')
-def decrement_logged_players():
-    global total_logged_players
-    # total_logged_players -= 1
-    print("total logged player when disconnection occurs: " + str(total_logged_players))
+# @socketio.on('disconnect')
+# def decrement_logged_players():
+#     global total_logged_players
+#     # total_logged_players -= 1
+#     print("total logged player when disconnection occurs: " + str(total_logged_players))
 
 
 @socketio.on('player')
