@@ -200,8 +200,9 @@ def handle_message(data):
 
 
 @socketio.on('connect')
-def lobby():
-    global total_logged_players
+def lobby(roomid):
+    print("connected")
+    print(roomid)
     # total_logged_players += 1
 
 
