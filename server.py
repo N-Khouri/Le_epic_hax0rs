@@ -180,6 +180,11 @@ def waitingLobby():
             return render_template('main_menu.html', lobbyDNE="lobby was not found")
 
 
+@app.route('/join_lobby', methods=['GET', 'POST'])
+def join_lobby():
+    if request.method == 'GET':
+        return render_template('joinLobby_screen.html')
+
 # list(self.db.users_collection.find({}, {'_id': False}))
 # // server-side
 # @io.on("connection", (socket) => {

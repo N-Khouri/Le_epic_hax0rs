@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title> Main Menu </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        const conn = io();
+        function joinRoom() {
+            const roomText = document.getElementById("room");
+            const room_id = roomText.value;
+            conn.emit("join", room_id);
+        }
+    </script>
+</head>
+<body>
+    <div class = "BasicMenu">
+    <p> Specify what room you wish to join</p>
+    <input type="text" id="room" name="room">
+    <input type="button" onClick="joinRoom()" name="Join Room">
+    </div>
+</body>
+</html>
