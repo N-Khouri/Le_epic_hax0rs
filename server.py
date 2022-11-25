@@ -218,11 +218,11 @@ def join_lobby(id):
 
 @socketio.on('getHTMLPage')
 def sendHTML():
-    with open("templates/HeadsTails.html") as file:
-        template = file.read()
-        print(template)
-        send(template)
-        file.close()
+    text_file = open("templates/HeadsTails.html", "r")
+    template = text_file.read()
+    print(template)
+    emit("player_ready", {'data': template}, broadcast=True)
+    text_file.close()
 
 
 @socketio.on('player')
@@ -231,6 +231,10 @@ def handle_message(data):
     print(data)
     print(data.get("choice", ""))
     print("end")
+
+@socketio.on('ready')
+def response():
+    emit("player_ready", {'data': "Player is ready"}, broadcast=True)
 
 
 if __name__ == '__main__':

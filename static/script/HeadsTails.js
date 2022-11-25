@@ -127,6 +127,14 @@ function checkWinner(){
     }
 }
 
+function readyCheck(){
+    socket.emit("ready");
+}
+
+socket.on("player_ready", function(data){
+    document.getElementById("playerStatus").innerHTML = data["data"]
+
+});
 
 //document.getElementById("coinValue").innerHTML = "Heads";
 //document.getElementById("coinValue").innerHTML = "Tails";
