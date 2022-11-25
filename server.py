@@ -19,7 +19,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-all_rooms = []
+all_rooms = {}
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -78,9 +78,10 @@ def nuke():
     database.clear_db()
     return redirect(url_for('login'))
 
+
 @app.route('/logout', methods=['GET'])
 def logout():
-    session["username"]=None
+    session["username"] = None
     return render_template('login.html')
 
 
@@ -185,32 +186,10 @@ def join_lobby():
     if request.method == 'GET':
         return render_template('joinLobby_screen.html')
 
-# list(self.db.users_collection.find({}, {'_id': False}))
-# // server-side
-# @io.on("connection", (socket) => {
-#   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-# });
 
-# // client-side
-# socket.on("connect", () => {
-#   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-# });
-
-# socket.on("disconnect", () => {
-#   console.log(socket.id); // undefined
-# });
-
-
-@socketio.on('message')
-def handle_message(data):
-    print(data)
-    # if data == "heads":
-    #     print("heads")
-    # elif data == "tails":
-    #     print("tails")
-    # else:
-    #     print("ERROR !@#@!#@!#")
-    # print('received message is ' + data)
+@socketio.on('ready')
+def response():
+    emit("player_ready", {'data': str(session["username"]) + " is ready."}, broadcast=True)
 
 
 @socketio.on('create_lobby')
@@ -219,10 +198,10 @@ def lobby(roomid):
     print(roomid)
     join_room(roomid)
     global all_rooms
-    all_rooms.insert(0, roomid)
+    all_rooms[roomid] = 1
     print("all rooms")
     print(all_rooms)
-    # total_logged_players += 1
+
 
 @socketio.on('join')
 def join_lobby(id):
@@ -230,6 +209,12 @@ def join_lobby(id):
     print(id)
     join_room(id)
     print(rooms())
+    global all_rooms
+    all_rooms[id] = all_rooms[id] + 1
+    print(all_rooms)
+    if all_rooms[id] == 2:
+        emit('Game has started', render_template('HeadsTails.html'), broadcast=True)
+
 
 @socketio.on('getHTMLPage')
 def sendHTML():
@@ -238,11 +223,6 @@ def sendHTML():
         print(template)
         send(template)
         file.close()
-# @socketio.on('disconnect')
-# def decrement_logged_players():
-#     global total_logged_players
-#     # total_logged_players -= 1
-#     print("total logged player when disconnection occurs: " + str(total_logged_players))
 
 
 @socketio.on('player')
