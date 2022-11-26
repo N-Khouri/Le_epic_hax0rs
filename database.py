@@ -1,3 +1,4 @@
+import html
 import json
 import passwordSec
 
@@ -63,12 +64,14 @@ def increment_games(username):
 # TLDR -> Inserts a user if the user doesn't exist.
 # Functionality -> Call the DB to find the username. If the DB catches a username with the inputted username then exit; otherwise, insert the username and the password as a record into the users collectiion.
 def insert_user(username, password):
-    lookup = users.find_one({"username": username})
+    _username = html.escape(username)
+    _password = html.escape(password)
+    lookup = users.find_one({"username": _username})
     if lookup != None:
         return 0  # "An account with the inputted username already exists. Please log-in with that account."
     else:
-        hash_password = passwordSec.user_hash(username, password)
-        users.insert_one({"username": username, "password": hash_password, "hashed_cookie": b"" , "score": 0, "total games": 0})
+        hash_password = passwordSec.user_hash(_username, _password)
+        users.insert_one({"username": _username, "password": hash_password, "hashed_cookie": b"" , "score": 0, "total games": 0})
         return 1  # "An account with the username " + username + " has been successfully created."
 
 

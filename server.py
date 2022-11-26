@@ -21,15 +21,14 @@ socketio = SocketIO(app, async_mode=async_mode)
 all_rooms = {}
 
 
-
 def check_and_get_cookie():
-    active_cookie = False # assume cookie is always wrong until proven otherwise
+    active_cookie = False  # assume cookie is always wrong until proven otherwise
     get_cookie = ""
-    for line in request.headers: #loop thru headers
-        if "Cookie" in line: # key val pair: Cookie: (python, userID)
-            for i in line: #loop thru cookie line
+    for line in request.headers:  # loop thru headers
+        if "Cookie" in line:  # key val pair: Cookie: (python, userID)
+            for i in line:  # loop thru cookie line
                 x = str(i)
-                for j in x.split(";"): # loop thru tuple
+                for j in x.split(";"):  # loop thru tuple
                     if "userID=" in j:
                         get_cookie = j.replace("userID=", '').replace(" ", "")
                         active_cookie = database.check_cookie(get_cookie)
@@ -38,8 +37,7 @@ def check_and_get_cookie():
         print(get_cookie)
         return get_cookie
     else:
-        render_template("incorrect_cookie.html")    
-    
+        render_template("incorrect_cookie.html")
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -82,9 +80,9 @@ def playerProfile():
             get_username = database.get_db_info_via_cookie(get_cookie, "username")
             get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
             get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
-            return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)    
+            return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)
         else:
-            return redirect(url_for('login'))          
+            return redirect(url_for('login'))
 
 
 @app.route("/about", methods=['Get'])
@@ -300,6 +298,7 @@ def handle_message(data):
     print(data)
     print(data.get("choice", ""))
     print("end")
+
 
 @socketio.on('ready')
 def response():
