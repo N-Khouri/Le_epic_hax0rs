@@ -19,5 +19,17 @@
         <p class="coinValue" id="coinValue"></p>
     </div>
 
+    <script type="text/javascript">
+        socket.on('message',function(data){
+            $('#messages').append($('<p>').text(data));
+        });
+    </script>
+    <div id="messages">
+
+    </div>
+
+    <input type="text" id="message" placeholder="Message">
+    <button id="sendBTN" onclick="sendMessage()">Send</button>
+
 </body>
 </html>

@@ -7,6 +7,7 @@ from flask_socketio import *
 from flask_socketio import SocketIO
 from flask_session import Session
 
+import html
 import random
 import database
 import passwordSec
@@ -265,6 +266,7 @@ def lobby(roomid):
 
 @socketio.on('join')
 def join_lobby(id):
+    id = html.escape(id)
     print("joined room")
     print(id)
     global all_rooms
@@ -306,6 +308,16 @@ def handle_message(data):
 def response():
     emit("player_ready", {'data': "Player is ready"}, broadcast=True)
 
+@socketio.on('message')
+def handle_message(message):
+    message = html.escape(message)
+    emit('message',  message, broadcast=True)
+
+@socketio.on('getUsername')
+def getUsername():
+    get_cookie = check_and_get_cookie()
+    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+    emit('username', {'data': get_username})
 
 if __name__ == '__main__':
     host = "0.0.0.0"

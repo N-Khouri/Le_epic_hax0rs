@@ -142,5 +142,20 @@ socket.on("player_ready", function(data){
 
 });
 
+socket.on('message',function(data){
+    $('#messages').append($('<p>').text(data));
+});
+
+function sendMessage(){
+    console.log("hello");
+    socket.emit("getUsername")
+    socket.on("username", function(data){
+        const username = data['data']
+        const message = document.getElementById("message");
+        const messageData = username +":"+message.value;
+        socket.emit("message", messageData);
+    });
+}
+
 //document.getElementById("coinValue").innerHTML = "Heads";
 //document.getElementById("coinValue").innerHTML = "Tails";
