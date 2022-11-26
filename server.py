@@ -272,18 +272,20 @@ def join_lobby(id):
         emit('Game has started', render_template('HeadsTails.html'), broadcast=True)
 
 
-# @socketio.on('getHTMLPage')
-# def sendHTML():
-#     with open("templates/HeadsTails.html") as file:
-#         template = file.read()
-#         # print(template)
-#         send(template)
-#         file.close()
-# @socketio.on('disconnect')
-# def decrement_logged_players():
-#     global total_logged_players
-#     # total_logged_players -= 1
-#     print("total logged player when disconnection occurs: " + str(total_logged_players))
+@socketio.on('getHTMLPage')
+def sendHTML(data):
+    if data == "getGame":
+        text_file = open("templates/HeadsTails.html", "r")
+        template = text_file.read()
+        print(template)
+        emit("returned_html", {'data': template}, broadcast=True)
+        text_file.close()
+    else:
+        text_file = open("templates/loading_screen.html", "r")
+        template = text_file.read()
+        print(template)
+        emit("returned_html", {'data': template}, broadcast=True)
+        text_file.close()
 
 
 @socketio.on('player')
