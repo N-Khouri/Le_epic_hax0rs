@@ -1,28 +1,5 @@
 "use strict";
 
-// var socket = io();
-// const heads = 1;
-// const tails = 0;
-
-// function tossCoin(){
-//     const x = math.random
-
-//     if (x < 0.5){
-//         return tails;
-//     }
-//     else{
-//         return heads;
-//     }
-// }
-
-//  Things to do: 
-//  Figure out how to prevent users from reseting the timer/making it go faster
-//  Implement live chat
-//  Implement websockets
-//  Implement score functionality
-
-// Time left to choose
-
 var timeLeft = 5;
 var flipLockout = 0;
 var flipStarted = 0;
@@ -150,15 +127,19 @@ socket.on('render_message',function(data){
 
 function sendMessage(){
     console.log("hello");
-    // socket.emit("getUsername");
-    // socket.on("username", function(data){
-    //     const username = data['data'];
-        const message = document.getElementById("message_box");
-        const messageData = ":"+message.value;
-        console.log("message data");
-        console.log(messageData);
-        socket.emit("chat_message", messageData);
-    // });
+    var username = [];
+    socket.emit("getUsername");
+    socket.on("username", function(data){
+        username[0] = (data['data']);
+        console.log(data);
+        console.log(username);
+    });
+    console.log(username)
+    const message = document.getElementById("message_box");
+    const messageData = username+":"+message.value;
+    console.log("message data");
+    console.log(messageData);
+    socket.emit("chat_message", messageData);
 }
 
 //document.getElementById("coinValue").innerHTML = "Heads";
