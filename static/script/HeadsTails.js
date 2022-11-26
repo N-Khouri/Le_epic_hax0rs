@@ -128,7 +128,12 @@ function checkWinner(){
 }
 
 function readyCheck(){
-    socket.emit("ready");
+    socket.emit("getHTMLPage")
+    socket.on("returned_html",  function(data) {
+        console.log(data);
+        document.getElementById("gameContainer").innerHTML = data["data"];
+        document.getElementById("playerStatus").parentNode.removeChild(document.getElementById("playerStatus"));
+    });
 }
 
 socket.on("player_ready", function(data){

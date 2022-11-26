@@ -8,6 +8,11 @@
 
 </head>
 <body>
+    
+    <button class="coinChoice" id="ready" onClick="readyCheck()"> Ready </button>
+    <div id="playerStatus">
+
+    </div>
 
     <a href= "main_menu">
         <button class="exitGame"> Exit to main menu</button>
@@ -16,18 +21,7 @@
     <script type="text/javascript">
         const socket = io();
         const room_id = "{{lobby_name}}";
-        // socket.emit("join", room_id)
-        socket.emit("getHTMLPage")
-
-        socket.on("returned_html",  function(data) {
-            console.log(data)
-            document.getElementById("gameContainer").innerHTML = data["data"]
-            document.getElementById("playerStatus").parentNode.removeChild(document.getElementById("playerStatus"));
-            // const template = data["date"];
-            // for (let i of template){
-            //     document.getElementById("playerStatus").innerHTML = data["data"]
-            // }
-        });
+        socket.emit("create_lobby", room_id)
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
 
