@@ -50,6 +50,7 @@ def index():
         return render_template('login.html')
 
 
+
 @app.route("/HeadsTails", methods=['POST', 'GET'])
 def game():
     get_cookie = check_and_get_cookie()
