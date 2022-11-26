@@ -27,12 +27,11 @@ all_rooms = []
 def check_and_get_cookie():
     active_cookie = False # assume cookie is always wrong until proven otherwise
     get_cookie = ""
-    for line in request.headers:
-        if "Cookie" in line:
-            for i in line:
+    for line in request.headers: #loop thru headers
+        if "Cookie" in line: # key val pair: Cookie: (python, userID)
+            for i in line: #loop thru cookie line
                 x = str(i)
-                print(x.split(";"))
-                for j in x.split(";"):
+                for j in x.split(";"): # loop thru tuple
                     if "userID=" in j:
                         get_cookie = j.replace("userID=", '').replace(" ", "")
                         active_cookie = True
@@ -87,23 +86,6 @@ def playerProfile():
 
             return render_template('playerProfile.html', score=get_playerscore, total=get_playertotal)            
 
-        # active_cookie = False # assume cookie is always wrong until proven otherwise
-        # get_username = ""
-        # get_cookie = ""
-        # for line in request.headers:
-        #     if "Cookie" in line:
-        #         if len(line[1]) != 0:
-        #             get_cookie = line[1].replace("userID=", '')
-                    
-        #             active_cookie = True
-                
-        # if active_cookie:
-        #     get_username = database.get_db_info_via_cookie(get_cookie, "username")
-        #     get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
-        #     get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
-        #     return render_template('playerProfile.html', score=get_playerscore, total=get_playertotal)
-        # else:
-        #     render_template("incorrect_cookie.html")    
 
 
 @app.route("/about", methods=['Get'])

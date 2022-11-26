@@ -130,7 +130,7 @@ def get_hashed_cookie(cookie_input):
     new_hashed_cookie = passwordSec.hash_cookie(cookie_input)
     cur = users.find()
     results = list(cur)
-    hashed_cookie = ""
+    hashed_cookie = b""
     for line in results:
         hashed_cookie = line.get("hashed_cookie")
     return hashed_cookie
