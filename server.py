@@ -308,10 +308,10 @@ def handle_message(data):
 def response():
     emit("player_ready", {'data': "Player is ready"}, broadcast=True)
 
-@socketio.on('message')
+@socketio.on('chat_message')
 def handle_message(message):
     message = html.escape(message)
-    emit('message',  message, broadcast=True)
+    emit('render_message',  message, broadcast=True)
 
 @socketio.on('getUsername')
 def getUsername():

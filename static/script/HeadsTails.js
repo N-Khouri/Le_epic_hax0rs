@@ -33,14 +33,14 @@ const tails = "Tails";
 var playerChoice = "coin";
 var outcome = "coin";
 
-const AUGH = new Audio('static/sounds/AUUGH.mp3')
-const drumRoll = new Audio('static/sounds/DrumRoll.mp3')
-const womp = new Audio('static/sounds/womp.mp3')
+const AUGH = new Audio('static/sounds/AUUGH.mp3');
+const drumRoll = new Audio('static/sounds/DrumRoll.mp3');
+const womp = new Audio('static/sounds/womp.mp3');
 
 // Sets players choice to heads
 function headsFunction(){
     if (flipStarted === 0){
-    socket.emit("player", {data: socket.id, "choice": "heads"})
+    socket.emit("player", {data: socket.id, "choice": "heads"});
     document.getElementById("choice").innerHTML = "You chose: Heads";
     playerChoice = heads;
     startFlipTimer();
@@ -52,7 +52,7 @@ function headsFunction(){
 // Sets players choice to tails
 function tailsFunction(){
     if (flipStarted === 0){
-    socket.emit("player", {data: socket.id, "choice": "tails"})
+    socket.emit("player", {data: socket.id, "choice": "tails"});
     document.getElementById("choice").innerHTML = "You chose: Tails";
     playerChoice = tails;
     startFlipTimer();
@@ -93,7 +93,7 @@ function flipCoin(){
     // interval to build some suspense so we don't have to watch something extremely static
     var suspense = setInterval(function(){
         var x = Math.random();
-        document.getElementById("coinValue").style="color: rgba("+randomColor()+","+randomColor()+","+randomColor()+");"
+        document.getElementById("coinValue").style="color: rgba("+randomColor()+","+randomColor()+","+randomColor()+");";
         // if x is greater or less than .5 set the values respectively
         if(x < .5){
             document.getElementById("coinValue").innerHTML = "Heads";
@@ -138,23 +138,27 @@ function readyCheck(){
 }
 
 socket.on("player_ready", function(data){
-    document.getElementById("playerStatus").innerHTML = data["data"]
+    document.getElementById("playerStatus").innerHTML = data["data"];
 
 });
 
-socket.on('message',function(data){
+socket.on('render_message',function(data){
+    console.log("data");
+    console.log(data);
     $('#messages').append($('<p>').text(data));
 });
 
 function sendMessage(){
     console.log("hello");
-    socket.emit("getUsername")
-    socket.on("username", function(data){
-        const username = data['data']
-        const message = document.getElementById("message");
-        const messageData = username +":"+message.value;
-        socket.emit("message", messageData);
-    });
+    // socket.emit("getUsername");
+    // socket.on("username", function(data){
+    //     const username = data['data'];
+        const message = document.getElementById("message_box");
+        const messageData = ":"+message.value;
+        console.log("message data");
+        console.log(messageData);
+        socket.emit("chat_message", messageData);
+    // });
 }
 
 //document.getElementById("coinValue").innerHTML = "Heads";
