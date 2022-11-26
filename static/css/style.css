@@ -345,7 +345,7 @@ tbody tr:nth-child(even){
 
 .lobby{
     float: right;
-    color: var(--clr-neon-purple);
+    color: var(--clr-neon-pink);
 }
 
 .BasicMenu{
