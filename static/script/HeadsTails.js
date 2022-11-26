@@ -128,7 +128,7 @@ function checkWinner(){
 }
 
 function readyCheck(){
-    socket.emit("getHTMLPage")
+    socket.emit("getHTMLPage", "getGame")
     socket.on("returned_html",  function(data) {
         console.log(data);
         document.getElementById("gameContainer").innerHTML = data["data"];
