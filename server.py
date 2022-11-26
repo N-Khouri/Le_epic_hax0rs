@@ -31,13 +31,11 @@ def check_and_get_cookie():
                 for j in x.split(";"):  # loop thru tuple
                     if "userID=" in j:
                         get_cookie = j.replace("userID=", '').replace(" ", "")
-                        active_cookie = database.check_cookie(get_cookie)
-    if active_cookie:
-        print("function at top worked, cookie is: " + get_cookie)
-        print(get_cookie)
-        return get_cookie
-    else:
-        render_template("incorrect_cookie.html")
+                        if get_cookie is not None:
+                            active_cookie = database.check_cookie(get_cookie)                            
+    return (active_cookie, get_cookie)
+
+
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -51,19 +49,17 @@ def index():
 
 @app.route("/HeadsTails", methods=['POST', 'GET'])
 def game():
-    get_cookie = check_and_get_cookie()
-    if get_cookie is not None:
+    if check_and_get_cookie():
         if request.method == 'GET':
             return render_template('HeadsTails.html')
     else:
-        return render_template('login.html')
+        return redirect(url_for('login'))
 
 
 
 @app.route("/leaderboard", methods=['GET'])
 def render_leaderboard():
-    get_cookie = check_and_get_cookie()
-    if get_cookie is not None:
+    if check_and_get_cookie():
         if request.method == 'GET':
             database.update_leaderboard()
             all_players = database.all_users()
@@ -202,13 +198,15 @@ def dashboard(name, password):
 @app.route('/Create_lobby', methods=['GET', 'POST'])
 def create_lobby():
     get_cookie = check_and_get_cookie()
-    if len(get_cookie) > 0:
+    if get_cookie != "dne":
         if request.method == 'GET':
             lobby_number = str(random.randint(1, 1000))
             database.insert_lobby(lobby_number)
             print("lobbies")
             print(database.get_lobbies())
             return render_template('loading_screen.html', lobby_name=lobby_number)
+    else:
+        return redirect(url_for('login'))
     # elif request.method == 'POST':
     #     database.lobbies.delete_one({})
     #     return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
@@ -216,8 +214,7 @@ def create_lobby():
 
 @app.route("/loading_screen", methods=['POST'])
 def waitingLobby():
-    get_cookie = check_and_get_cookie()
-    if len(get_cookie) > 0:
+    if check_and_get_cookie():
         if request.method == 'POST':
             lobby_name = request.form['join_room']
 
@@ -235,7 +232,8 @@ def waitingLobby():
                 return render_template('loading_screen.html')
             else:
                 return render_template('main_menu.html', lobbyDNE="lobby was not found")
-
+    else: 
+        return render_leaderboard('incorret_cookie.html')
 
 @app.route('/join_lobby', methods=['GET', 'POST'])
 def join_lobby():
