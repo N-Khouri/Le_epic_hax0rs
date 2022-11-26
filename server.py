@@ -32,7 +32,7 @@ def check_and_get_cookie():
                 for j in x.split(";"): # loop thru tuple
                     if "userID=" in j:
                         get_cookie = j.replace("userID=", '').replace(" ", "")
-                        active_cookie = True
+                        active_cookie = database.check_cookie(get_cookie)
     if active_cookie:
         print("function at top worked, cookie is: " + get_cookie)
         print(get_cookie)
@@ -54,54 +54,63 @@ def index():
 @app.route("/HeadsTails", methods=['POST', 'GET'])
 def game():
     get_cookie = check_and_get_cookie()
-    if len(get_cookie) > 0:
+    if get_cookie is not None:
         if request.method == 'GET':
             return render_template('HeadsTails.html')
-        else:
-            return render_template('login.html')
+    else:
+        return render_template('login.html')
+
 
 
 @app.route("/leaderboard", methods=['GET'])
 def render_leaderboard():
     get_cookie = check_and_get_cookie()
-    if len(get_cookie) > 0:
+    if get_cookie is not None:
         if request.method == 'GET':
             database.update_leaderboard()
             all_players = database.all_users()
             return render_template('leaderboard.html', players=all_players)
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route("/playerProfile", methods=["GET"])
 def playerProfile():
     if request.method == 'GET':
         get_cookie = check_and_get_cookie()
-        if len(get_cookie) > 0:
+        if get_cookie is not None:
             get_username = database.get_db_info_via_cookie(get_cookie, "username")
             get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
             get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
-            return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)              
+            return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)    
+        else:
+            return redirect(url_for('login'))          
 
 
 @app.route("/about", methods=['Get'])
 def about():
     get_cookie = check_and_get_cookie()
-    if len(get_cookie) > 0:
+    if get_cookie is not None:
         if request.method == 'GET':
             return render_template('about.html')
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route("/contactInfo", methods=['GET'])
 def contactInfo():
     get_cookie = check_and_get_cookie()
-    if len(get_cookie) > 0:
+    if get_cookie is not None:
         if request.method == 'GET':
             return render_template('contactInfo.html')
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/main_menu', methods=['GET', 'POST'])
 def main_menu():
     get_cookie = check_and_get_cookie()
-    if len(get_cookie) > 0:
+    if get_cookie is not None:
         if request.method == 'GET':
             get_username = database.get_db_info_via_cookie(get_cookie, "username")
             print(get_username)
