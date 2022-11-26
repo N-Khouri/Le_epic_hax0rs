@@ -1,6 +1,7 @@
 import json
 import passwordSec
 
+from secrets import token_urlsafe
 from pymongo import MongoClient
 import random
 
@@ -47,7 +48,6 @@ def get_games(username):
 def get_score(username):
     return users.find_one({"username": username})["score"]
 
-
 #########################################################################################################################################
 
 def increment_score(username):
@@ -68,7 +68,7 @@ def insert_user(username, password):
         return 0  # "An account with the inputted username already exists. Please log-in with that account."
     else:
         hash_password = passwordSec.user_hash(username, password)
-        users.insert_one({"username": username, "password": hash_password, "score": 0, "total games": 0})
+        users.insert_one({"username": username, "password": hash_password, "hashed_cookie": b"" , "score": 0, "total games": 0})
         return 1  # "An account with the username " + username + " has been successfully created."
 
 
@@ -123,3 +123,40 @@ def print_users_db():
     return users_list
 
     ###########################################################################
+
+
+
+def get_hashed_cookie(cookie_input):
+    new_hashed_cookie = passwordSec.hash_cookie(cookie_input)
+    cur = users.find()
+    results = list(cur)
+    hashed_cookie = b""
+    for line in results:
+        hashed_cookie = line.get("hashed_cookie")
+    return hashed_cookie
+
+
+def get_db(username):
+    return users.find_one({"username": username})
+
+def create_and_update_hashed_cookie(username):
+    create_token = token_urlsafe(16)
+    hashed_token = passwordSec.hash_cookie(create_token)
+    print("create token is: ")
+    print(create_token)
+    print("hashed_cookie is:")
+    print(hashed_token)
+    users.update_one({"username": username}, {'$set': {"hashed_cookie": hashed_token}})
+    return create_token
+
+def check_cookie(cookie):
+    if get_hashed_cookie(cookie) == passwordSec.hash_cookie(cookie):
+        return True
+    else:
+        return False
+
+def get_db_info_via_cookie(cookie, key_in_db_to_look_for):
+    if check_cookie(cookie): #double check cookie exists
+        return users.find_one({"hashed_cookie": passwordSec.hash_cookie(cookie)})[str(key_in_db_to_look_for)]
+    else:
+        return "ERROR input cookie does not exist in db"

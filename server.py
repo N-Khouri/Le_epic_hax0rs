@@ -1,7 +1,7 @@
 import datetime
 from flask import Flask, render_template, request, session
 from flask import Flask, redirect, url_for, request
-from flask import Flask, render_template
+from flask import Flask, render_template, make_response
 from flask_socketio import *
 
 from flask_socketio import SocketIO
@@ -20,7 +20,26 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-all_rooms = {}
+all_rooms = []
+
+
+
+def check_and_get_cookie():
+    active_cookie = False # assume cookie is always wrong until proven otherwise
+    get_cookie = ""
+    for line in request.headers: #loop thru headers
+        if "Cookie" in line: # key val pair: Cookie: (python, userID)
+            for i in line: #loop thru cookie line
+                x = str(i)
+                for j in x.split(";"): # loop thru tuple
+                    if "userID=" in j:
+                        get_cookie = j.replace("userID=", '').replace(" ", "")
+                        active_cookie = True
+    if active_cookie:
+        return get_cookie
+    else:
+        render_template("incorrect_cookie.html")    
+    
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -50,9 +69,23 @@ def render_leaderboard():
 @app.route("/playerProfile", methods=["GET"])
 def playerProfile():
     if request.method == 'GET':
-        playerScore = database.get_score(session["username"])
-        playerTotal = database.get_games(session["username"])
-        return render_template('playerProfile.html', score=playerScore, total=playerTotal)
+        get_cookie = check_and_get_cookie()
+        if len(get_cookie) > 0:
+            print("get cookie is: " + get_cookie)
+            print()
+            get_username = database.get_db_info_via_cookie(get_cookie, "username")
+            get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
+            get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
+            print(get_username)
+            print(type(get_username))
+            print(get_playerscore)
+            print(type(get_playerscore))
+            print(get_playertotal)
+            print(type(get_playertotal))
+
+
+            return render_template('playerProfile.html', score=get_playerscore, total=get_playertotal)            
+
 
 
 @app.route("/about", methods=['Get'])
@@ -101,6 +134,8 @@ def login():
         input_username = request.form['username']
         input_password = request.form['password']
 
+
+
         if request.form.__contains__("register"):
             print(type(input_password))
             print(type(input_username))
@@ -112,18 +147,22 @@ def login():
                 return render_template('failed_register.html')
 
             else:
-                session["username"] = input_username
-                print("username logged in is: ", session["username"])
-                return render_template('main_menu.html')
+                return render_template('login.html')
 
         elif request.form.__contains__("login"):
             get_salt = database.get_salt(input_username)
             if get_salt != 0:
                 verify = passwordSec.verify(input_username, input_password)
                 if verify == 1:
-                    session["username"] = input_username
-                    print("username logged in is: ", session["username"])
-                    return render_template('main_menu.html')
+                    # session["username"] = input_username
+                    # print("login cookie is: " + str(session["username"]))
+                    # return render_template('main_menu.html')
+
+                    resp = make_response(render_template('main_menu.html'))
+                    resp.set_cookie('userID', database.create_and_update_hashed_cookie(input_username))
+                    return resp
+
+
                 elif isinstance(verify, str):
                     print("Username does not exist.")
                     return render_template('does_not_exist.html')
@@ -224,13 +263,18 @@ def join_lobby(id):
         emit('Game has started', render_template('HeadsTails.html'), broadcast=True)
 
 
-@socketio.on('getHTMLPage')
-def sendHTML():
-    text_file = open("templates/HeadsTails.html", "r")
-    template = text_file.read()
-    print(template)
-    emit("returned_html", {'data': template}, broadcast=True)
-    text_file.close()
+# @socketio.on('getHTMLPage')
+# def sendHTML():
+#     with open("templates/HeadsTails.html") as file:
+#         template = file.read()
+#         # print(template)
+#         send(template)
+#         file.close()
+# @socketio.on('disconnect')
+# def decrement_logged_players():
+#     global total_logged_players
+#     # total_logged_players -= 1
+#     print("total logged player when disconnection occurs: " + str(total_logged_players))
 
 
 @socketio.on('player')
