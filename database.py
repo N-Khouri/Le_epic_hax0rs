@@ -126,15 +126,20 @@ def print_users_db():
 
 
 
+
 def get_hashed_cookie(cookie_input):
     new_hashed_cookie = passwordSec.hash_cookie(cookie_input)
     cur = users.find()
     results = list(cur)
     hashed_cookie = b""
+    ret_val = bytes()
+    print(len(results))
     for line in results:
-        print(line)
         hashed_cookie = line.get("hashed_cookie")
-    return hashed_cookie
+        if new_hashed_cookie == hashed_cookie:
+            print("AAAAAAAAAA")
+            ret_val = hashed_cookie
+    return ret_val
 
 
 def get_db(username):
@@ -143,14 +148,21 @@ def get_db(username):
 def create_and_update_hashed_cookie(username):
     create_token = token_urlsafe(16)
     hashed_token = passwordSec.hash_cookie(create_token)
-    print("create token is: ")
-    print(create_token)
-    print("hashed_cookie is:")
-    print(hashed_token)
+    # print("create token is: ")
+    # print(create_token)
+    # print("hashed_cookie is:")
+    # print(hashed_token)
     users.update_one({"username": username}, {'$set': {"hashed_cookie": hashed_token}})
     return create_token
 
 def check_cookie(cookie):
+    # print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    # print(cookie)
+    x = get_hashed_cookie(cookie)
+    y = passwordSec.hash_cookie(cookie)
+    # print(x)
+    # print(y)
+    # print()
     if get_hashed_cookie(cookie) == passwordSec.hash_cookie(cookie):
         return True
     else:

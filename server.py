@@ -36,6 +36,8 @@ def check_and_get_cookie():
                         get_cookie = j.replace("userID=", '').replace(" ", "")
                         active_cookie = True
     if active_cookie:
+        print("function at top worked, cookie is: " + get_cookie)
+        print(get_cookie)
         return get_cookie
     else:
         render_template("incorrect_cookie.html")    
@@ -86,23 +88,23 @@ def playerProfile():
 
             return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)            
 
-        # active_cookie = False # assume cookie is always wrong until proven otherwise
-        # get_username = ""
-        # get_cookie = ""
-        # for line in request.headers:
-        #     if "Cookie" in line:
-        #         if len(line[1]) != 0:
-        #             get_cookie = line[1].replace("userID=", '')
+            # active_cookie = False # assume cookie is always wrong until proven otherwise
+            # get_username = ""
+            # get_cookie = ""
+            # for line in request.headers:
+            #     if "Cookie" in line:
+            #         if len(line[1]) != 0:
+            #             get_cookie = line[1].replace("userID=", '')
+                        
+            #             active_cookie = True
                     
-        #             active_cookie = True
-                
-        # if active_cookie:
-        #     get_username = database.get_db_info_via_cookie(get_cookie, "username")
-        #     get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
-        #     get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
-        #     return render_template('playerProfile.html', score=get_playerscore, total=get_playertotal)
-        # else:
-        #     render_template("incorrect_cookie.html")    
+            # if active_cookie:
+            #     get_username = database.get_db_info_via_cookie(get_cookie, "username")
+            #     get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
+            #     get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
+            #     return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)            
+            # else:
+            #     render_template("incorrect_cookie.html")    
 
 
 @app.route("/about", methods=['Get'])
@@ -153,7 +155,7 @@ def logout():
 def login():
     # print(request.method)
     if request.method == 'GET':
-        # print("aAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        print("aAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         return render_template('login.html')
     elif request.method == "POST":
         input_username = request.form['username']
@@ -182,6 +184,7 @@ def login():
                     # session["username"] = input_username
                     # print("login cookie is: " + str(session["username"]))
                     # return render_template('main_menu.html')
+                    print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
 
                     resp = make_response(render_template('main_menu.html'))
                     resp.set_cookie('userID', database.create_and_update_hashed_cookie(input_username))
