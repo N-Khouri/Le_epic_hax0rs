@@ -133,6 +133,7 @@ function readyCheck(){
         console.log(data);
         document.getElementById("gameContainer").innerHTML = data["data"];
         document.getElementById("playerStatus").parentNode.removeChild(document.getElementById("playerStatus"));
+        document.getElementById("ready").parentNode.removeChild(document.getElementById("ready"));
     });
 }
 
