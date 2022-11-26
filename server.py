@@ -52,18 +52,22 @@ def index():
 
 @app.route("/HeadsTails", methods=['POST', 'GET'])
 def game():
-    if request.method == 'GET':
-        return render_template('HeadsTails.html')
-    else:
-        return render_template('login.html')
+    get_cookie = check_and_get_cookie()
+    if len(get_cookie) > 0:
+        if request.method == 'GET':
+            return render_template('HeadsTails.html')
+        else:
+            return render_template('login.html')
 
 
 @app.route("/leaderboard", methods=['GET'])
 def render_leaderboard():
-    if request.method == 'GET':
-        database.update_leaderboard()
-        all_players = database.all_users()
-        return render_template('leaderboard.html', players=all_players)
+    get_cookie = check_and_get_cookie()
+    if len(get_cookie) > 0:
+        if request.method == 'GET':
+            database.update_leaderboard()
+            all_players = database.all_users()
+            return render_template('leaderboard.html', players=all_players)
 
 
 @app.route("/playerProfile", methods=["GET"])
@@ -71,42 +75,38 @@ def playerProfile():
     if request.method == 'GET':
         get_cookie = check_and_get_cookie()
         if len(get_cookie) > 0:
-            print("get cookie is: " + get_cookie)
-            print()
             get_username = database.get_db_info_via_cookie(get_cookie, "username")
             get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
             get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
-            print(get_username)
-            print(type(get_username))
-            print(get_playerscore)
-            print(type(get_playerscore))
-            print(get_playertotal)
-            print(type(get_playertotal))
-
-
             return render_template('playerProfile.html', score=get_playerscore, total=get_playertotal)            
 
 
 
 @app.route("/about", methods=['Get'])
 def about():
-    if request.method == 'GET':
-        return render_template('about.html')
+    get_cookie = check_and_get_cookie()
+    if len(get_cookie) > 0:
+        if request.method == 'GET':
+            return render_template('about.html')
 
 
 @app.route("/contactInfo", methods=['GET'])
 def contactInfo():
-    if request.method == 'GET':
-        return render_template('contactInfo.html')
+    get_cookie = check_and_get_cookie()
+    if len(get_cookie) > 0:
+        if request.method == 'GET':
+            return render_template('contactInfo.html')
 
 
 @app.route('/main_menu', methods=['GET', 'POST'])
 def main_menu():
-    if request.method == 'GET':
-        if not session.get("username"):
-            return redirect(url_for('login'))
-        else:
-            return render_template('main_menu.html', user=database.get_lobbies())
+    get_cookie = check_and_get_cookie()
+    if len(get_cookie) > 0:
+        if request.method == 'GET':
+            if not session.get("username"):
+                return redirect(url_for('login'))
+            else:
+                return render_template('main_menu.html', user=database.get_lobbies())
 
 
 @app.route('/nuke', methods=['GET', 'POST'])
@@ -196,12 +196,14 @@ def dashboard(name, password):
 
 @app.route('/Create_lobby', methods=['GET', 'POST'])
 def create_lobby():
-    if request.method == 'GET':
-        lobby_number = str(random.randint(1, 1000))
-        database.insert_lobby(lobby_number)
-        print("lobbies")
-        print(database.get_lobbies())
-        return render_template('loading_screen.html', lobby_name=lobby_number)
+    get_cookie = check_and_get_cookie()
+    if len(get_cookie) > 0:
+        if request.method == 'GET':
+            lobby_number = str(random.randint(1, 1000))
+            database.insert_lobby(lobby_number)
+            print("lobbies")
+            print(database.get_lobbies())
+            return render_template('loading_screen.html', lobby_name=lobby_number)
     # elif request.method == 'POST':
     #     database.lobbies.delete_one({})
     #     return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
@@ -209,29 +211,33 @@ def create_lobby():
 
 @app.route("/loading_screen", methods=['POST'])
 def waitingLobby():
-    if request.method == 'POST':
-        lobby_name = request.form['join_room']
+    get_cookie = check_and_get_cookie()
+    if len(get_cookie) > 0:
+        if request.method == 'POST':
+            lobby_name = request.form['join_room']
 
-        #  lobby db in this format{'_id': ObjectId('637fe95a9e3e33b375145bf2'), 'lobby': '783'}
-        get_lobbys = database.lobbies.find()
-        lobby_list = list(get_lobbys)
+            #  lobby db in this format{'_id': ObjectId('637fe95a9e3e33b375145bf2'), 'lobby': '783'}
+            get_lobbys = database.lobbies.find()
+            lobby_list = list(get_lobbys)
 
-        found_lobby_bool = False
-        for line in lobby_list:
-            get_lobby_id = line.get("lobby")
-            if get_lobby_id == lobby_name:
-                found_lobby_bool = True
+            found_lobby_bool = False
+            for line in lobby_list:
+                get_lobby_id = line.get("lobby")
+                if get_lobby_id == lobby_name:
+                    found_lobby_bool = True
 
-        if found_lobby_bool:
-            return render_template('loading_screen.html')
-        else:
-            return render_template('main_menu.html', lobbyDNE="lobby was not found")
+            if found_lobby_bool:
+                return render_template('loading_screen.html')
+            else:
+                return render_template('main_menu.html', lobbyDNE="lobby was not found")
 
 
 @app.route('/join_lobby', methods=['GET', 'POST'])
 def join_lobby():
-    if request.method == 'GET':
-        return render_template('joinLobby_screen.html')
+    get_cookie = check_and_get_cookie()
+    if len(get_cookie) > 0:
+        if request.method == 'GET':
+            return render_template('joinLobby_screen.html')
 
 
 @socketio.on('ready')
