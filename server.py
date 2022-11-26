@@ -14,6 +14,7 @@ import json
 
 async_mode = None
 app = Flask(__name__)
+app.secret_key = '\rf\xcb\xd4f\x085L\x99\xbc\xb5\xc1|!W\xc2m\xa6\x91\x9d\xa8(n\x9d'
 socketio = SocketIO(app, async_mode=async_mode)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -69,8 +70,10 @@ def contactInfo():
 @app.route('/main_menu', methods=['GET', 'POST'])
 def main_menu():
     if request.method == 'GET':
-        global username
-        return render_template('main_menu.html', user=database.get_lobbies())
+        if not session.get("username"):
+            return redirect(url_for('login'))
+        else:
+            return render_template('main_menu.html', user=database.get_lobbies())
 
 
 @app.route('/nuke', methods=['GET', 'POST'])
@@ -81,8 +84,11 @@ def nuke():
 
 @app.route('/logout', methods=['GET'])
 def logout():
-    session["username"] = None
-    return render_template('login.html')
+    if request.method == 'GET':
+        print(session["username"], " logged out!")
+        session.pop('username', None)
+        print(session)
+        return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -95,8 +101,6 @@ def login():
         input_username = request.form['username']
         input_password = request.form['password']
 
-        session["username"] = input_username
-
         if request.form.__contains__("register"):
             print(type(input_password))
             print(type(input_username))
@@ -108,6 +112,8 @@ def login():
                 return render_template('failed_register.html')
 
             else:
+                session["username"] = input_username
+                print("username logged in is: ", session["username"])
                 return render_template('main_menu.html')
 
         elif request.form.__contains__("login"):
@@ -115,6 +121,8 @@ def login():
             if get_salt != 0:
                 verify = passwordSec.verify(input_username, input_password)
                 if verify == 1:
+                    session["username"] = input_username
+                    print("username logged in is: ", session["username"])
                     return render_template('main_menu.html')
                 elif isinstance(verify, str):
                     print("Username does not exist.")
