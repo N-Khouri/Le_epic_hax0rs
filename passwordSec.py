@@ -3,6 +3,8 @@ import database
 import os
 
 
+
+
 # Before you call any of these functions is it your responsibility to check whether the user already has an account or needs one.
 
 ###################### For database usage only ######################
@@ -17,7 +19,6 @@ def user_hash(username, password):
         500_000
     )
     return hash
-
 
 #####################################################################
 
@@ -37,3 +38,9 @@ def verify(username, password):
         return 1
     else:
         return 0
+
+#####################################################################
+# hash a cookie
+def hash_cookie(cookie):
+    m = hashlib.sha256(cookie.encode())
+    return m.digest()
