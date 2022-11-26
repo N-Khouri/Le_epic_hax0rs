@@ -1,6 +1,6 @@
 "use strict";
 
-var socket = io();
+// var socket = io();
 // const heads = 1;
 // const tails = 0;
 
@@ -62,7 +62,7 @@ function tailsFunction(){
 
 // Starts countdown for both players
 function startFlipTimer(){
-    if (flipLockout == 0){
+    if (flipLockout === 0){
     var timer = setInterval(function(){
         document.getElementById('timerNumber').innerHTML= "Timer:"+timeLeft;
         document.getElementById('timer').value -= .01;

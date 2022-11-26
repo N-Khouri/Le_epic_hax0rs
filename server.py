@@ -221,7 +221,7 @@ def sendHTML():
     text_file = open("templates/HeadsTails.html", "r")
     template = text_file.read()
     print(template)
-    emit("player_ready", {'data': template}, broadcast=True)
+    emit("returned_html", {'data': template}, broadcast=True)
     text_file.close()
 
 
