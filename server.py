@@ -79,7 +79,10 @@ def playerProfile():
             get_username = database.get_db_info_via_cookie(get_cookie, "username")
             get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
             get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
-            return render_template('playerProfile.html', score=get_playerscore, total=get_playertotal)            
+            print(get_username)
+            print(get_playerscore)
+            print(get_playertotal)
+            return render_template('playerProfile.html', username=get_username,score=get_playerscore, total=get_playertotal)            
 
 
 
@@ -120,10 +123,10 @@ def nuke():
 
 @app.route('/logout', methods=['GET'])
 def logout():
-    if request.method == 'GET':
-        print(session["username"], " logged out!")
-        session.pop('username', None)
-        print(session)
+    # if request.method == 'GET':
+    #     print(session["username"], " logged out!")
+    #     session.pop('username', None)
+    #     print(session)
         return redirect(url_for('login'))
 
 

@@ -150,6 +150,10 @@ def create_and_update_hashed_cookie(username):
     return create_token
 
 def check_cookie(cookie):
+    x = get_hashed_cookie(cookie)
+    y = passwordSec.hash_cookie(cookie)
+    print(x)
+    print(y)
     if get_hashed_cookie(cookie) == passwordSec.hash_cookie(cookie):
         return True
     else:
