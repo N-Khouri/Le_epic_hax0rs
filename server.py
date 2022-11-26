@@ -20,7 +20,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-all_rooms = []
+all_rooms = {}
 
 
 
@@ -266,13 +266,15 @@ def lobby(roomid):
 def join_lobby(id):
     print("joined room")
     print(id)
-    join_room(id)
-    print(rooms())
     global all_rooms
-    all_rooms[id] = all_rooms[id] + 1
-    print(all_rooms)
-    if all_rooms[id] == 2:
-        emit('Game has started', render_template('HeadsTails.html'), broadcast=True)
+    if id not in all_rooms.keys():
+        emit("lobby_nonexistent", {'data': "Lobby does not exist. Go fuck yourself."})
+    else:
+        join_room(id)
+        print(rooms())
+        all_rooms[id] = all_rooms[id] + 1
+        print(all_rooms)
+        emit("existent_lobby")
 
 
 @socketio.on('getHTMLPage')
