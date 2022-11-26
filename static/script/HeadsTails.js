@@ -125,15 +125,18 @@ socket.on('render_message',function(data){
     $('#messages').append($('<p>').text(data));
 });
 
-function sendMessage(){
+socket.on("username", function(data){
+    const username = data['data'];
+    console.log(data);
+    console.log(username);
+    message_to_render(username);
+});
+
+function sendMessage() {
     console.log("hello");
-    var username = [];
     socket.emit("getUsername");
-    socket.on("username", function(data){
-        username[0] = (data['data']);
-        console.log(data);
-        console.log(username);
-    });
+}
+function message_to_render(username){
     console.log(username)
     const message = document.getElementById("message_box");
     const messageData = username+":"+message.value;
