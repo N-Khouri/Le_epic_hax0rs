@@ -133,11 +133,9 @@ def get_hashed_cookie(cookie_input):
     results = list(cur)
     hashed_cookie = b""
     ret_val = bytes()
-    print(len(results))
     for line in results:
         hashed_cookie = line.get("hashed_cookie")
         if new_hashed_cookie == hashed_cookie:
-            print("AAAAAAAAAA")
             ret_val = hashed_cookie
     return ret_val
 

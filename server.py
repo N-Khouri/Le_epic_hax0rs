@@ -16,9 +16,7 @@ async_mode = None
 app = Flask(__name__)
 app.secret_key = '\rf\xcb\xd4f\x085L\x99\xbc\xb5\xc1|!W\xc2m\xa6\x91\x9d\xa8(n\x9d'
 socketio = SocketIO(app, async_mode=async_mode)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+
 
 all_rooms = {}
 
@@ -81,30 +79,7 @@ def playerProfile():
             get_username = database.get_db_info_via_cookie(get_cookie, "username")
             get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
             get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
-            print(get_username)
-            print(get_playerscore)
-            print(get_playertotal)
-            print(type(get_playertotal))
-
-            return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)            
-
-            # active_cookie = False # assume cookie is always wrong until proven otherwise
-            # get_username = ""
-            # get_cookie = ""
-            # for line in request.headers:
-            #     if "Cookie" in line:
-            #         if len(line[1]) != 0:
-            #             get_cookie = line[1].replace("userID=", '')
-                        
-            #             active_cookie = True
-                    
-            # if active_cookie:
-            #     get_username = database.get_db_info_via_cookie(get_cookie, "username")
-            #     get_playerscore = database.get_db_info_via_cookie(get_cookie, "score")
-            #     get_playertotal = database.get_db_info_via_cookie(get_cookie, "total games")
-            #     return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)            
-            # else:
-            #     render_template("incorrect_cookie.html")    
+            return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)              
 
 
 @app.route("/about", methods=['Get'])
@@ -128,10 +103,9 @@ def main_menu():
     get_cookie = check_and_get_cookie()
     if len(get_cookie) > 0:
         if request.method == 'GET':
-            # if not session.get("username"):
-            #     return redirect(url_for('login'))
-            # else:
-            return render_template('main_menu.html', user=database.get_lobbies())
+            get_username = database.get_db_info_via_cookie(get_cookie, "username")
+            print(get_username)
+            return render_template('main_menu.html', username = get_username, user=database.get_lobbies())
     else:
         return redirect(url_for('login'))
 
@@ -144,23 +118,24 @@ def nuke():
 
 @app.route('/logout', methods=['GET'])
 def logout():
-    # if request.method == 'GET':
-    #     print(session["username"], " logged out!")
-    #     session.pop('username', None)
-    #     print(session)
-        return redirect(url_for('login'))
-
+    resp = make_response(redirect(url_for('login')))
+    resp.delete_cookie('userID')
+    return resp
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # print(request.method)
     if request.method == 'GET':
-        print("aAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-        return render_template('login.html')
+        #checking if the cookie exists, it does then the user is directed to main menu or else redirected to login page.
+        get_cookie = check_and_get_cookie()
+        if get_cookie is not None:
+            get_username = database.get_db_info_via_cookie(get_cookie, "username")
+            return render_template('main_menu.html', username = get_username, user=database.get_lobbies())
+        else:
+            return render_template('login.html')
+
     elif request.method == "POST":
         input_username = request.form['username']
         input_password = request.form['password']
-
 
 
         if request.form.__contains__("register"):
@@ -181,12 +156,7 @@ def login():
             if get_salt != 0:
                 verify = passwordSec.verify(input_username, input_password)
                 if verify == 1:
-                    # session["username"] = input_username
-                    # print("login cookie is: " + str(session["username"]))
-                    # return render_template('main_menu.html')
-                    print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
-
-                    resp = make_response(render_template('main_menu.html'))
+                    resp = make_response(render_template('main_menu.html', username = input_username, user=database.get_lobbies()))
                     resp.set_cookie('userID', database.create_and_update_hashed_cookie(input_username))
                     return resp
 
