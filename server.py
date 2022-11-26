@@ -104,10 +104,12 @@ def main_menu():
     get_cookie = check_and_get_cookie()
     if len(get_cookie) > 0:
         if request.method == 'GET':
-            if not session.get("username"):
-                return redirect(url_for('login'))
-            else:
-                return render_template('main_menu.html', user=database.get_lobbies())
+            # if not session.get("username"):
+            #     return redirect(url_for('login'))
+            # else:
+            return render_template('main_menu.html', user=database.get_lobbies())
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/nuke', methods=['GET', 'POST'])
