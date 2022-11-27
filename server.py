@@ -18,7 +18,6 @@ app = Flask(__name__)
 app.secret_key = '\rf\xcb\xd4f\x085L\x99\xbc\xb5\xc1|!W\xc2m\xa6\x91\x9d\xa8(n\x9d'
 socketio = SocketIO(app, async_mode=async_mode)
 
-
 all_rooms = {}
 
 
@@ -33,10 +32,8 @@ def check_and_get_cookie():
                     if "userID=" in j:
                         get_cookie = j.replace("userID=", '').replace(" ", "")
                         if get_cookie is not None:
-                            active_cookie = database.check_cookie(get_cookie)                            
+                            active_cookie = database.check_cookie(get_cookie)
     return (active_cookie, get_cookie)
-
-
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -47,7 +44,6 @@ def index():
         return render_template('login.html')
 
 
-
 # @app.route("/HeadsTails", methods=['POST', 'GET'])
 # def game():
 #     if check_and_get_cookie():
@@ -55,7 +51,6 @@ def index():
 #             return render_template('HeadsTails.html')
 #     else:
 #         return redirect(url_for('login'))
-
 
 
 @app.route("/leaderboard", methods=['GET'])
@@ -127,10 +122,11 @@ def logout():
     resp.delete_cookie('userID')
     return resp
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        #checking if the cookie exists, it does then the user is directed to main menu or else redirected to login page.
+        # checking if the cookie exists, it does then the user is directed to main menu or else redirected to login page.
         get_cookie = check_and_get_cookie()
         if get_cookie[0]:
             get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
@@ -205,7 +201,9 @@ def create_lobby():
     if get_cookie[0]:
         if request.method == 'GET':
             lobby_number = str(random.randint(1, 1000))
-            database.insert_lobby(lobby_number)
+            get_cookie = check_and_get_cookie()
+            get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+            database.insert_lobby(lobby_number, get_username)
             print("lobbies")
             print(database.get_lobbies())
             return render_template('loading_screen.html', lobby_name=lobby_number)
@@ -237,7 +235,7 @@ def waitingLobby():
                 return render_template('loading_screen.html')
             else:
                 return render_template('main_menu.html', lobbyDNE="lobby was not found")
-    else: 
+    else:
         return render_leaderboard('incorret_cookie.html')
 
 
@@ -311,16 +309,44 @@ def handle_message(data):
 def response():
     emit("player_ready", {'data': "Player is ready"}, broadcast=True)
 
+
 @socketio.on('chat_message')
 def handle_message(message):
     message = html.escape(message)
-    emit('render_message',  message, broadcast=True)
+    emit('render_message', message, broadcast=True)
+
 
 @socketio.on('getUsername')
-def getUsername():
+def getUsername(route):
+    print("in getUsername")
+    print(route)
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-    emit('username', {'data': get_username})
+    construct = {'username': get_username}
+
+    if len(route) == 1:
+        emit(route[0], construct)
+
+    elif len(route) == 2:
+        print("sending the 2 dict")
+        construct['room_id'] = route[1]
+        print(construct)
+        remove_game(construct)
+        # emit(route[0], construct)
+
+
+@socketio.on("backend_removal")
+def remove_game(data):
+    print("backend_removal")
+    print(database.get_raw_lobbies())
+    print(data)
+    username = data['username']
+    room_id = data['room_id']
+    database.delete_lobby(username)
+    print(database.get_raw_lobbies())
+    global all_rooms
+    del all_rooms[room_id]
+
 
 if __name__ == '__main__':
     host = "0.0.0.0"

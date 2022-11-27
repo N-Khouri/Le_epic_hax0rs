@@ -13,13 +13,17 @@
 
 
     <a href= "main_menu">
-        <button class="exitGame"> Exit to main menu</button>
+        <button id="exitGame"> Exit to main menu</button>
     </a>
 
     <script type="text/javascript">
         const socket = io();
         const room_id = "{{lobby_name}}";
         socket.emit("create_lobby", room_id)
+
+        document.getElementById("exitGame").addEventListener("click", function(){
+            initiate_disconnection(room_id);
+        })
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
 

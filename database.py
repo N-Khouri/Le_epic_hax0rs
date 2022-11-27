@@ -15,15 +15,21 @@ salt = database["salt"]
 lobbies = database["lobbies"]
 
 
-def insert_lobby(lobby_number):
-    lobbies.insert_one({"lobby": lobby_number})
+def insert_lobby(lobby_number, username):
+    lobbies.insert_one({"lobby": lobby_number, "user": username})
+
+def delete_lobby(username):
+    lobbies.delete_many({"user": username})
 
 def get_lobbies():
     all_lobbies = lobbies.find({})
     to_return = []
     for i in all_lobbies:
-        to_return.append(i["lobby"])
+        to_return.append(str(i["user"]) + "'s lobby: " + str(i["lobby"]))
     return to_return
+
+def get_raw_lobbies():
+    return list(lobbies.find({}))
 
 ####################################### Verification Usage Only. Don't play with these functions. #######################################
 def insert_salt(username, _salt):
