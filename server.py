@@ -65,7 +65,7 @@ def render_leaderboard():
         if request.method == 'GET':
             database.update_leaderboard()
             all_players = database.all_users()
-            return render_template('leaderboard.html', players=all_players)
+            return render_template('leaderboard.html', players = all_players)
     else:
         return redirect(url_for('login'))
 
@@ -78,7 +78,7 @@ def playerProfile():
             get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
             get_playerscore = database.get_db_info_via_cookie(get_cookie[1], "score")
             get_playertotal = database.get_db_info_via_cookie(get_cookie[1], "total games")
-            return render_template('playerProfile.html', username = get_username, score=get_playerscore, total=get_playertotal)
+            return render_template('playerProfile.html', username = html.unescape(get_username), score=get_playerscore, total=get_playertotal)
         else:
             return redirect(url_for('login'))
 
@@ -110,7 +110,7 @@ def main_menu():
         if request.method == 'GET':
             get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
             print(get_username)
-            return render_template('main_menu.html', username = get_username, user=database.get_lobbies())
+            return render_template('main_menu.html', username = html.unescape(get_username), user=database.get_lobbies())
     else:
         return redirect(url_for('login'))
 
@@ -134,7 +134,7 @@ def login():
         get_cookie = check_and_get_cookie()
         if get_cookie[0]:
             get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-            return render_template('main_menu.html', username = get_username, user=database.get_lobbies())
+            return render_template('main_menu.html', username = html.unescape(get_username), user=database.get_lobbies())
         else:
             return render_template('login.html')
 
@@ -142,14 +142,17 @@ def login():
         input_username = request.form['username']
         input_password = request.form['password']
 
+        _username = html.escape(input_username)
+        _password = html.escape(input_password)
+
 
         if request.form.__contains__("register"):
-            print(type(input_password))
-            print(type(input_username))
+            print(type(_password))
+            print(type(_username))
             print(input_password)
-            print(input_username)
+            print(_password)
 
-            ret_val = database.insert_user(input_username, input_password)
+            ret_val = database.insert_user(_username, _password)
             if ret_val == 0:
                 return render_template('failed_register.html')
 
@@ -157,12 +160,12 @@ def login():
                 return render_template('login.html')
 
         elif request.form.__contains__("login"):
-            get_salt = database.get_salt(input_username)
+            get_salt = database.get_salt(_username)
             if get_salt != 0:
-                verify = passwordSec.verify(input_username, input_password)
+                verify = passwordSec.verify(_username, _password)
                 if verify == 1:
-                    resp = make_response(render_template('main_menu.html', username = input_username, user=database.get_lobbies()))
-                    resp.set_cookie('userID', database.create_and_update_hashed_cookie(input_username))
+                    resp = make_response(render_template('main_menu.html', username = html.unescape(_username), user=database.get_lobbies()))
+                    resp.set_cookie('userID', database.create_and_update_hashed_cookie(_username))
                     return resp
 
                 elif isinstance(verify, str):
