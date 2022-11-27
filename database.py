@@ -19,7 +19,7 @@ def insert_lobby(lobby_number, username):
     lobbies.insert_one({"lobby": lobby_number, "user": username})
 
 def delete_lobby(username):
-    lobbies.delete_one({"username": username})
+    lobbies.delete_many({"user": username})
 
 def get_lobbies():
     all_lobbies = lobbies.find({})
@@ -27,6 +27,9 @@ def get_lobbies():
     for i in all_lobbies:
         to_return.append(str(i["user"]) + "'s lobby: " + str(i["lobby"]))
     return to_return
+
+def get_raw_lobbies():
+    return list(lobbies.find({}))
 
 ####################################### Verification Usage Only. Don't play with these functions. #######################################
 def insert_salt(username, _salt):

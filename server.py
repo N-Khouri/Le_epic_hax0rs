@@ -316,6 +316,7 @@ def handle_message(message):
 
 @socketio.on('getUsername')
 def getUsername(route):
+    print("in getUsername")
     print(route)
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
@@ -325,15 +326,22 @@ def getUsername(route):
         emit(route[0], construct)
 
     elif len(route) == 2:
+        print("sending the 2 dict")
         construct['room_id'] = route[1]
-        emit(route[0], construct)
+        print(construct)
+        remove_game(construct)
+        # emit(route[0], construct)
 
 
-@socketio.on("disconnect")
+@socketio.on("backend_removal")
 def remove_game(data):
-    username = data[0]
-    room_id = data[1]
+    print("backend_removal")
+    print(database.get_raw_lobbies())
+    print(data)
+    username = data['username']
+    room_id = data['room_id']
     database.delete_lobby(username)
+    print(database.get_raw_lobbies())
     global all_rooms
     del all_rooms[room_id]
 

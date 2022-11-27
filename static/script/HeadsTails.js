@@ -146,14 +146,15 @@ function message_to_render(username){
 }
 
 function initiate_disconnection(roomid){
-    socket.emit("getUsername", ["_disconnect", roomid]);
+    socket.emit("getUsername", ["frontend_removal", roomid]);
 }
 
-socket.on("_disconnect", function(data){
+socket.on("frontend_removal", function(data){
+    console.log("in frontend_removal socket");
     console.log(data);
     const username = data['username'];
     const room_id = data['room_id'];
-    socket.emit("disconnect", [username, room_id]);
+    socket.emit("backend_removal", [username, room_id]);
 
 })
 
