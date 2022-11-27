@@ -126,7 +126,7 @@ socket.on('render_message',function(data){
 });
 
 socket.on("username", function(data){
-    const username = data['data'];
+    const username = data['username'];
     console.log(data);
     console.log(username);
     message_to_render(username);
@@ -134,7 +134,7 @@ socket.on("username", function(data){
 
 function sendMessage() {
     console.log("hello");
-    socket.emit("getUsername");
+    socket.emit("getUsername", ["username"]);
 }
 function message_to_render(username){
     console.log(username)
@@ -144,6 +144,18 @@ function message_to_render(username){
     console.log(messageData);
     socket.emit("chat_message", messageData);
 }
+
+function initiate_disconnection(roomid){
+    socket.emit("getUsername", ["_disconnect", roomid]);
+}
+
+socket.on("_disconnect", function(data){
+    console.log(data);
+    const username = data['username'];
+    const room_id = data['room_id'];
+    socket.emit("disconnect", [username, room_id]);
+
+})
 
 //document.getElementById("coinValue").innerHTML = "Heads";
 //document.getElementById("coinValue").innerHTML = "Tails";
