@@ -19,7 +19,9 @@ app.secret_key = '\rf\xcb\xd4f\x085L\x99\xbc\xb5\xc1|!W\xc2m\xa6\x91\x9d\xa8(n\x
 socketio = SocketIO(app, async_mode=async_mode)
 
 all_rooms = {}
-player_choice = {}
+player_in_room = {} # {username: roomid}
+player_choice = {} # {username: choice} (choice = heads/tails.tostring)
+game_tracker = {}  # {roomid: {username1: choice, username2: choice}
 
 
 def check_and_get_cookie():
@@ -358,57 +360,65 @@ def remove_game(data):
 def hang(data):
     print("data is")
     print(data)
+    
+    get_cookie = check_and_get_cookie()
+    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+    global player_in_room
+    player_in_room[get_username] = data
+    print(player_in_room)
+
     while True:
         players_in_room = all_rooms[data] #get players in room, this will throw an error in console but u can still click on ready and do everything else
         if players_in_room == 1: # reset to 2 later on, testing for 1 person as of now
             get_cookie = check_and_get_cookie()
             get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-            global player_choice # use cookies to keep track of player and their choice
-            # need to figure out and update dict to be {room_id: (player1: choice, player2: choice)
-            #testing code below
+            global player_choice 
             if len(player_choice) > 0:
-                if player_choice[get_username] == "heads":
-                    print("HEADS MFER")
-                    player_choice[get_username] = "" # reset to empty string so it doesnt fill the console w heads/tails string
-                elif player_choice[get_username]== "tails":
-                    print("TAILS AAAAAAAAAAAAAAAAAAAAAAAAAAA")
-                    player_choice[get_username] = "" 
-            #finale code should look like this
-            # get_roomid_key = player_choice[roomdid]
-            # if # conditional checking if the length of that dictionary is 2 and if player1 and 2 both have made a choice
-            #     emit("startFlipTimer()") # probably have socket.on("player_ready", function(data){ 
-            #         # in headstails js and inside function just call // startFlipTimer();
-            #
+                get_choice = player_choice[get_username].get("choice")
+                get_roomid = player_choice[get_username].get("room_id")
 
+
+                if  get_choice == "heads":
+                    print("HEADS")
+                    print(player_choice) # {'a': {'room_id': '689', 'choice': 'heads'}}
+                    player_choice[get_username] = {"room_id": get_roomid, "choice": ""}# reset to empty string so it doesnt looping
+                    print(player_choice) # {'a': {'room_id': '689', 'choice': ''}}
+
+                    
+
+
+                elif get_choice == "tails":
+                    print("TAILS")
+                    print(player_choice) # {'a': {'room_id': '689', 'choice': 'TAILS'}}
+                    player_choice[get_username] = {"room_id": get_roomid, "choice": ""}# reset to empty string so it doesnt looping
+                    print(player_choice) # {'a': {'room_id': '689', 'choice': ''}}
+
+                    
+
+#player_choice = {} # {username: choice} (choice = heads/tails.tostring)
+#game_tracker = {}  # {roomid: {username1: choice, username2: choice}
 
 
 @socketio.on("heads")
-def set_dict():
+def set_heads():
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-    global player_choice
-    player_choice[get_username] = "heads" # update dict to be {room_id: (player1: choice, player2: choice)
-    print(player_choice)
-    print("end of heads")
-
+    global player_in_room
+    roomid = player_in_room[get_username]
+    global player_choice# player_choice[roomid] = "heads" # update dict to be {player1: (roomid: choice), player2: (roomid: choice))
+    player_choice[get_username] = {"room_id": roomid, "choice": "heads"}
+    
 
 @socketio.on("tails")
-def set_dict():
+def set_tails():
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+    global player_in_room
+    roomid = player_in_room[get_username]
     global player_choice
-    player_choice[get_username] = "tails" # update dict to be {room_id: (player1: choice, player2: choice)
-    print(player_choice)
-    print("end of tails")
+    player_choice[get_username] = {"room_id": roomid, "choice": "tails"} # {'a': {'room_id': '329', 'choice': 'heads'}}
 
-@socketio.on("find_room") # for update dict to be {room_id: (player1: choice, player2: choice) i was trying to figure out a way to grab -
-def find_room(id): # the room id, i was thinking we cud template it but idk where and how, either that or go extreme and have a database/global dict {player_cookie: roomid} and just - 
-    print("find room") #update that everytime a player joins/leaves a lobby, maybe brute force update it so when at main menu it changes their roomid to empty string cuz if they close tab
-    get_cookie = check_and_get_cookie()
-    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-    print(get_username)
-    print(id)
-    print()
+
 
 
 

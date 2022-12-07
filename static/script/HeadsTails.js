@@ -25,8 +25,6 @@ function headsFunction(info){// testing headsFunction(socket.socket) in headstai
     document.getElementById("choice").innerHTML = "You chose: Heads";
     playerChoice = heads;
     socket.emit("heads")
-    // socket.emit("find_room", info)
-
     // startFlipTimer();
     }
     else{return;}
@@ -40,7 +38,6 @@ function tailsFunction(info){ // testing tailsFunction(socket.roomid) in headsta
     document.getElementById("choice").innerHTML = "You chose: Tails";
     playerChoice = tails;
     socket.emit("tails")
-    // socket.emit("find_room", socket.room_id) 
     // startFlipTimer();
     }
     else{}
