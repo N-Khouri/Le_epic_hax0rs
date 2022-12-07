@@ -19,6 +19,7 @@ app.secret_key = '\rf\xcb\xd4f\x085L\x99\xbc\xb5\xc1|!W\xc2m\xa6\x91\x9d\xa8(n\x
 socketio = SocketIO(app, async_mode=async_mode)
 
 all_rooms = {}
+player_choice = {}
 
 
 def check_and_get_cookie():
@@ -286,13 +287,13 @@ def sendHTML(data):
     if data == "getGame":
         text_file = open("templates/HeadsTails.html", "r")
         template = text_file.read()
-        print(template)
+        # print(template)returned_html
         emit("returned_html", {'data': template}, broadcast=True)
         text_file.close()
     else:
         text_file = open("templates/loading_screen.html", "r")
         template = text_file.read()
-        print(template)
+        # print(template)
         emit("returned_html", {'data': template}, broadcast=True)
         text_file.close()
 
@@ -346,6 +347,71 @@ def remove_game(data):
     print(database.get_raw_lobbies())
     global all_rooms
     del all_rooms[room_id]
+
+
+
+
+
+# print(template)returned_html
+# commented this out on lines 290/296 cuz it was filling up console
+@socketio.on("wait_to_start_game") # in loadingsceern.html line 23 
+def hang(data):
+    print("data is")
+    print(data)
+    while True:
+        players_in_room = all_rooms[data] #get players in room, this will throw an error in console but u can still click on ready and do everything else
+        if players_in_room == 1: # reset to 2 later on, testing for 1 person as of now
+            get_cookie = check_and_get_cookie()
+            get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+            global player_choice # use cookies to keep track of player and their choice
+            # need to figure out and update dict to be {room_id: (player1: choice, player2: choice)
+            #testing code below
+            if len(player_choice) > 0:
+                if player_choice[get_username] == "heads":
+                    print("HEADS MFER")
+                    player_choice[get_username] = "" # reset to empty string so it doesnt fill the console w heads/tails string
+                elif player_choice[get_username]== "tails":
+                    print("TAILS AAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                    player_choice[get_username] = "" 
+            #finale code should look like this
+            # get_roomid_key = player_choice[roomdid]
+            # if # conditional checking if the length of that dictionary is 2 and if player1 and 2 both have made a choice
+            #     emit("startFlipTimer()") # probably have socket.on("player_ready", function(data){ 
+            #         # in headstails js and inside function just call // startFlipTimer();
+            #
+
+
+
+@socketio.on("heads")
+def set_dict():
+    get_cookie = check_and_get_cookie()
+    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+    global player_choice
+    player_choice[get_username] = "heads" # update dict to be {room_id: (player1: choice, player2: choice)
+    print(player_choice)
+    print("end of heads")
+
+
+@socketio.on("tails")
+def set_dict():
+    get_cookie = check_and_get_cookie()
+    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+    global player_choice
+    player_choice[get_username] = "tails" # update dict to be {room_id: (player1: choice, player2: choice)
+    print(player_choice)
+    print("end of tails")
+
+@socketio.on("find_room") # for update dict to be {room_id: (player1: choice, player2: choice) i was trying to figure out a way to grab -
+def find_room(id): # the room id, i was thinking we cud template it but idk where and how, either that or go extreme and have a database/global dict {player_cookie: roomid} and just - 
+    print("find room") #update that everytime a player joins/leaves a lobby, maybe brute force update it so when at main menu it changes their roomid to empty string cuz if they close tab
+    get_cookie = check_and_get_cookie()
+    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+    print(get_username)
+    print(id)
+    print()
+
+
+
 
 
 if __name__ == '__main__':

@@ -14,25 +14,34 @@ const AUGH = new Audio('static/sounds/AUUGH.mp3');
 const drumRoll = new Audio('static/sounds/DrumRoll.mp3');
 const womp = new Audio('static/sounds/womp.mp3');
 
+window.onbeforeunload = function(){ // emits a message when window is closed
+    socket.emit("closing")
+}
+
 // Sets players choice to heads
-function headsFunction(){
+function headsFunction(info){// testing headsFunction(socket.socket) in headstail.html, didnt really work
     if (flipStarted === 0){
-    socket.emit("player", {data: socket.id, "choice": "heads"});
+    // socket.emit("player", {data: socket.id, "choice": "heads"});
     document.getElementById("choice").innerHTML = "You chose: Heads";
     playerChoice = heads;
-    startFlipTimer();
+    socket.emit("heads")
+    // socket.emit("find_room", info)
+
+    // startFlipTimer();
     }
     else{return;}
 }
 
 
 // Sets players choice to tails
-function tailsFunction(){
+function tailsFunction(info){ // testing tailsFunction(socket.roomid) in headstail.html, didnt really work
     if (flipStarted === 0){
-    socket.emit("player", {data: socket.id, "choice": "tails"});
+    // socket.emit("player", {data: socket.id, "choice": "tails"});
     document.getElementById("choice").innerHTML = "You chose: Tails";
     playerChoice = tails;
-    startFlipTimer();
+    socket.emit("tails")
+    // socket.emit("find_room", socket.room_id) 
+    // startFlipTimer();
     }
     else{}
 }

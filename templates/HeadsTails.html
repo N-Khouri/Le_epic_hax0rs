@@ -14,8 +14,9 @@
     <p class="choice" id="opponentChoice"> Opponent chose: </p>
     <p class="outcome" id="outcome"> You have: </p>
     <div class="board">
-        <button class="coinChoice" id="heads" onclick="headsFunction()"> Heads </button>
-        <button class="coinChoice" id="tails" onclick="tailsFunction()"> Tails </button>
+    
+        <button class="coinChoice" id="heads" onclick="headsFunction(socket.socket)"> Heads </button>
+        <button class="coinChoice" id="tails" onclick="tailsFunction(socket.roomid)"> Tails </button>
         <p class="coinValue" id="coinValue"></p>
     </div>
 
