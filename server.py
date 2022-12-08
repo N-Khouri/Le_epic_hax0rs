@@ -277,6 +277,10 @@ def check_existence(data):
         new_template = template[get_index + len("const socket = io();"): template.find("</html>")]
         new_template = "<script type=\"text/javascript\">" + new_template
         new_template = new_template.replace("{{lobby_name}}", data)
+
+        find_link = new_template.find("<script type=\"text/javascript\" src=\"{{ url_for('static', filename='script/HeadsTails.js') }}\"></script>")
+        new_template = new_template[:find_link] + new_template[find_link + len("<script type=\"text/javascript\" src=\"{{ url_for('static', filename='script/HeadsTails.js') }}\"></script>"):]
+        join_room(data)
         emit("render_template", new_template)
     else:
         return emit("nonexistent_lobby", "Lobby does not exist.")
@@ -300,7 +304,7 @@ def join_lobby(room_id):
     print(_id)
     global all_rooms
     if _id not in all_rooms.keys():
-        emit("lobby_nonexistent", {'data': "Lobby does not exist. Go fuck yourself."})
+        emit("lobby_nonexistent", {'data': "Lobby does not exist."})
     else:
         join_room(_id)
         print(rooms())
@@ -312,6 +316,7 @@ def join_lobby(room_id):
 @socketio.on('getHTMLPage')
 def sendHTML(data):
     if isinstance(data, dict) and data["game"] == "getGame":
+        print("data: " + str(data))
         room_id = data["room"]
         global ready_players
         ready_players[room_id] = ready_players[room_id] + 1
@@ -322,13 +327,14 @@ def sendHTML(data):
             while ready_players[room_id] != 2:
                 if counter == 100_000_000:
                     emit("ready_status",
-                         "Still waiting for one player to press ready. Can you hurry up dawg and press Ready...",
+                         "Still waiting...",
                          room=room_id, broadcast=True)
 
                 counter += 1
                 continue
-        emit("remove_status")
-        emit("returned_html", {'data': render_template("HeadsTails.html")})
+        else:
+            emit("remove_status", room=room_id, broadcast=True)
+            emit("returned_html", {'data': render_template("HeadsTails.html")}, room=room_id, broadcast=True)
     elif isinstance(data, list):
         render_lobby = render_template("loading_screen.html", lobby_name=data[1])
 

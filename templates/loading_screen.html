@@ -16,6 +16,7 @@
         // socket.emit("wait_to_start_game", room_id);
 
         function removeStatus(){
+            document.getElementById("ready").remove();
             readyCheck(room_id);
         }
 
@@ -27,8 +28,10 @@
 
         socket.on("remove_status", () => {
             document.getElementById("playerStatus").remove();
-        })
+        });
+
     </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
 </head>
 <body>
 
@@ -39,7 +42,7 @@
     <button id="exitGame" onclick=initiate_disconnection(room_id)> Exit to main menu</button>
 </a>
 
-<script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
+
 
 <div class="BasicMenu" id="playerStatus">
     <p>lobby name: {{lobby_name}}</p>

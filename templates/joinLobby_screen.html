@@ -10,8 +10,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script type="text/javascript">
         const socket = io();
+        var _room_id = "{{lobby_name}}";
 
         function check(room_id) {
+            _room_id = room_id
             socket.emit("check_room", room_id);
         }
 
@@ -23,55 +25,26 @@
         socket.on("nonexistent_lobby", (data) => {
             document.getElementById("joinRoom").innerText = data;
         });
+
+        // socket.emit("wait_to_start_game", room_id);
+
+        function removeStatus(){
+            document.getElementById("ready").remove();
+            readyCheck(_room_id);
+        }
+
+        socket.on("ready_status", (data) => {
+            console.log("entered");
+            document.getElementById("change").innerText = "";
+            document.getElementById("change").innerText = data;
+
+        });
+
+        socket.on("remove_status", () => {
+            document.getElementById("playerStatus").remove();
+        });
     </script>
-    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"-->
-    <!--            integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="-->
-    <!--            crossorigin="anonymous"></script>-->
-    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
-
-    <!--    <script type="text/javascript">-->
-    <!--        const socket = io();-->
-    <!--        var store_room_id = 0;-->
-
-    <!--        function removeStatus(){-->
-    <!--            document.getElementById("playerStatus").remove();-->
-    <!--            readyCheck();-->
-    <!--        }-->
-
-    <!--        function store() {-->
-    <!--            store_room_id = document.getElementById("room").value;-->
-    <!--            console.log(store_room_id);-->
-    <!--            joinRoom(store_room_id);-->
-    <!--        }-->
-
-    <!--        socket.on("existent_lobby", function () {-->
-
-    <!--            document.getElementById("joinRoom").remove();-->
-
-    <!--            socket.emit("getHTMLPage", ["getLoadingScreen", store_room_id]);-->
-
-    <!--            socket.on("lobby_p2", function (data) {-->
-    <!--                document.getElementById("exit").remove();-->
-    <!--                document.getElementById("holder").innerHTML = data["data"];-->
-    <!--            });-->
-    <!--        });-->
-
-    <!--        socket.on("lobby_nonexistent", function (data) {-->
-    <!--            console.log(data);-->
-
-    <!--            document.getElementById("joinRoom").remove();-->
-
-
-    <!--            document.getElementById("holder").innerText = data["data"];-->
-    <!--        });-->
-
-    <!--        socket.on("ready_status", (data) => {-->
-    <!--            document.getElementById("change").innerText = "";-->
-    <!--            document.getElementById("change").innerText = data;-->
-
-    <!--        })-->
-    <!--    </script>-->
-    <!--    <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>-->
+    <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
 
 </head>
 <div id="remove">
@@ -85,7 +58,7 @@
     <div class="BasicMenu" id="joinRoom">
         <p> Specify what room you wish to join</p>
         <input type="text" id="room" name="room">
-        <input type="button" name="Join Room" onclick=check(document.getElementById("room").value)>
+        <input type="button" value="Join Room" onclick=check(document.getElementById("room").value)>
     </div>
 
     <div id="holder"></div>
@@ -95,4 +68,6 @@
 
 <div id="loading_screen">
 </div>
+
+
 </html>

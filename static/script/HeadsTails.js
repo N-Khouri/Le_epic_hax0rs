@@ -115,7 +115,6 @@ function readyCheck(room_id) {
 
 socket.on("returned_html", function (data) {
     document.getElementById("gameContainer").innerHTML = data["data"];
-    document.getElementById("ready").remove();
 });
 
 
