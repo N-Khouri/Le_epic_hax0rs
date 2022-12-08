@@ -13,7 +13,7 @@
         const room_id = "{{lobby_name}}";
         socket.emit("create_lobby", room_id);
 
-        // socket.emit("wait_to_start_game", room_id);
+        socket.emit("wait_to_start_game", room_id);
 
         function removeStatus(){
             document.getElementById("ready").remove();

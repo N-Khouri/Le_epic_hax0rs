@@ -10,6 +10,13 @@ const tails = "Tails";
 var playerChoice = "coin";
 var outcome = "coin";
 
+var myUsername = "";
+
+socket.emit("getUsername_or_deleteLobby", ["username", "amogus", "amogus2"])
+socket.on("username_in_js", (data) => {
+    myUsername = data["username"];
+})
+
 const AUGH = new Audio('static/sounds/AUUGH.mp3');
 const drumRoll = new Audio('static/sounds/DrumRoll.mp3');
 const womp = new Audio('static/sounds/womp.mp3');
@@ -44,59 +51,12 @@ function tailsFunction(info) { // testing tailsFunction(socket.roomid) in headst
     }
 }
 
-// Starts countdown for both players
-function startFlipTimer() {
-    if (flipLockout === 0) {
-        var timer = setInterval(function () {
-            document.getElementById('timerNumber').innerHTML = "Timer:" + timeLeft;
-            document.getElementById('timer').value -= .01;
-            timeLeft -= .01;
-            if (timeLeft < 0) {
-                clearInterval(timer);
-                document.getElementById('timer').value = 5;
-                timeLeft = 5;
-            }
-        }, 10);
-        // Flips coin after 7.8 seconds
-        flipLockout = 1;
-        setTimeout(flipCoin, 5000);
-    } else {
-    }
-}
 
 // Helper function for setting color of coin
 function randomColor() {
     return Math.floor(Math.random() * 255);
 }
 
-// Actual flipping of coin
-function flipCoin() {
-    flipStarted = 1;
-    drumRoll.play();
-    var iterations = 24;
-    // interval to build some suspense so we don't have to watch something extremely static
-    var suspense = setInterval(function () {
-        var x = Math.random();
-        document.getElementById("coinValue").style = "color: rgba(" + randomColor() + "," + randomColor() + "," + randomColor() + ");";
-        // if x is greater or less than .5 set the values respectively
-        if (x < .5) {
-            document.getElementById("coinValue").innerHTML = "Heads";
-            outcome = heads;
-        } else {
-            document.getElementById("coinValue").innerHTML = "Tails";
-            outcome = tails;
-        }
-        iterations -= 1;
-        if (iterations < 0) {
-            clearInterval(suspense);
-        }
-    }, 150);
-
-    // Checks win condition after 2 seconds
-    setTimeout(function () {
-        checkWinner();
-    }, 4500);
-}
 
 // Checks win condition
 function checkWinner() {
@@ -171,7 +131,44 @@ socket.on("remove_players", (data) => {
 //document.getElementById("coinValue").innerHTML = "Tails";
 
 socket.on("start_game", function (data) {
-    startFlipTimer();
+    const userName1 = data["player1"];
+    const userName2 = data["player2"];
+    console.log(flipLockout);
+    if (flipLockout < 1){
+        if (userName1 != myUsername){
+            document.getElementById("opponentChoice").innerHTML = "Opponent chose: " + data[userName1];
+        }
+        else{
+            document.getElementById("opponentChoice").innerHTML = "Opponent chose: " + data[userName2];
+        };
+
+        flipLockout += 1;
+        console.log("game has started");
+        outcome = data["server_flip"];
+        drumRoll.play();
+        var iterations = 24;
+        // interval to build some suspense so we don't have to watch something extremely static
+        var suspense = setInterval(function () {
+            var x = Math.random();
+            document.getElementById("coinValue").style = "color: rgba(" + randomColor() + "," + randomColor() + "," + randomColor() + ");";
+            // if x is greater or less than .5 set the values respectively
+            if (x < .5) {
+                document.getElementById("coinValue").innerHTML = "Heads";
+            } else {
+                document.getElementById("coinValue").innerHTML = "Tails";
+            };
+            iterations -= 1;
+            if (iterations < 0) {
+                clearInterval(suspense);
+            };
+        }, 150);
+
+        // Checks win condition after 2 seconds
+        setTimeout(function () {
+            document.getElementById("coinValue").innerHTML = outcome;
+            checkWinner();
+        }, 4300);
+    };
 });
 
 function joinRoom(room_id) {

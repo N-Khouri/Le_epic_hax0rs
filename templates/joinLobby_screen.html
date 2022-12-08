@@ -18,6 +18,7 @@
         }
 
         socket.on("render_template", (data) => {
+            socket.emit("wait_to_start_game", _room_id);
             document.getElementById("remove").remove();
             document.getElementById("loading_screen").innerHTML = data;
         });
@@ -26,7 +27,7 @@
             document.getElementById("joinRoom").innerText = data;
         });
 
-        // socket.emit("wait_to_start_game", room_id);
+        // socket.emit("wait_to_start_game", _room_id);
 
         function removeStatus(){
             document.getElementById("ready").remove();
