@@ -24,8 +24,8 @@
 
             socket.on("returned_html", function (data) {
                 console.log(data);
+                document.getElementById("exitGame").parentNode.removeChild(document.getElementById("exitGame"));
                 document.getElementById("gameContainer").innerHTML = data["data"];
-                document.getElementById("playerStatus").parentNode.removeChild(document.getElementById("playerStatus"));
             });
         });
 
@@ -41,9 +41,9 @@
 </head>
 <body>
     <a href= "main_menu">
-        <button class="exitGame"> Exit to main menu</button>
+        <button id="exitGame"> Exit to main menu</button>
     </a>
-    
+
     <div class = "BasicMenu" id="joinRoom">
         <p> Specify what room you wish to join</p>
         <input type="text" id="room" name="room">
@@ -51,7 +51,7 @@
     </div>
 
     <div id="playerStatus">
-        
+
     </div>
 
     <div id="gameContainer">

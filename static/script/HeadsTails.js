@@ -157,17 +157,16 @@ function message_to_render(username){
 }
 
 function initiate_disconnection(roomid){
-    socket.emit("getUsername", ["frontend_removal", roomid]);
+    socket.emit("getUsername", ["", roomid]);
 }
 
-socket.on("frontend_removal", function(data){
-    console.log("in frontend_removal socket");
-    console.log(data);
-    const username = data['username'];
-    const room_id = data['room_id'];
-    socket.emit("backend_removal", [username, room_id]);
 
-})
+socket.on("remove_players", (data) => {
+    console.log(data);
+    document.getElementById("game_ground").parentNode.removeChild(document.getElementById("game_ground"));
+    document.getElementById("diconnected_game").innerHTML = data[data];
+});
+
 
 //document.getElementById("coinValue").innerHTML = "Heads";
 //document.getElementById("coinValue").innerHTML = "Tails";

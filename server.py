@@ -101,15 +101,26 @@ def contactInfo():
 
 
 @app.route('/main_menu', methods=['GET', 'POST'])
-def main_menu():
-    get_cookie = check_and_get_cookie()
-    if get_cookie[0]:
-        if request.method == 'GET':
-            get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-            print(get_username)
-            return render_template('main_menu.html', username = html.unescape(get_username), user=database.get_lobbies())
-    else:
-        return redirect(url_for('login'))
+def main_menu(from_login=0, username=None):
+    if "userID" not in request.cookies and from_login == 0:
+        print("headers: " + str(request.headers))
+        return redirect(url_for("login"))
+    elif from_login == 1:
+        resp = make_response(redirect(url_for("main_menu"), code=302))
+        print(url_for("main_menu"))
+        resp.set_cookie('userID', database.create_and_update_hashed_cookie(username))
+
+        print("here is were it breaks.")
+        return resp
+    elif from_login == 0 and "userID" in request.cookies:
+        get_cookie = check_and_get_cookie()
+        if get_cookie[0]:
+            if request.method == 'GET':
+                get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+                print(get_username)
+                return render_template('main_menu.html', username = html.unescape(get_username), user=database.get_lobbies())
+        else:
+            return redirect(url_for("login"))
 
 
 @app.route('/nuke', methods=['GET', 'POST'])
@@ -125,18 +136,19 @@ def logout():
     return resp
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'GET':
         # checking if the cookie exists, it does then the user is directed to main menu or else redirected to login page.
         get_cookie = check_and_get_cookie()
         if get_cookie[0]:
-            get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-            return render_template('main_menu.html', username = html.unescape(get_username), user=database.get_lobbies())
+            # get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+            # return render_template('main_menu.html', username = html.unescape(get_username), user=database.get_lobbies())
+            return redirect(url_for("main_menu"))
         else:
             return render_template('login.html')
 
-    elif request.method == "POST":
+    if request.method == "POST":
         input_username = request.form['username']
         input_password = request.form['password']
 
@@ -162,10 +174,12 @@ def login():
             if get_salt != 0:
                 verify = passwordSec.verify(_username, _password)
                 if verify == 1:
-                    resp = make_response(render_template('main_menu.html', username = html.unescape(_username), user=database.get_lobbies()))
-                    resp.set_cookie('userID', database.create_and_update_hashed_cookie(_username))
-                    return resp
+                    # template = render_template('main_menu.html', username = html.unescape(_username), user=database.get_lobbies())
+                    # resp = make_response(template)
+                    # resp.set_cookie('userID', database.create_and_update_hashed_cookie(_username))
+                    # resp.headers["from_login"] = 1
 
+                    return main_menu(1, _username)
                 elif isinstance(verify, str):
                     print("Username does not exist.")
                     return render_template('does_not_exist.html')
@@ -334,10 +348,7 @@ def getUsername(route):
         construct['room_id'] = route[1]
         print(construct)
         remove_game(construct)
-        # emit(route[0], construct)
 
-
-@socketio.on("backend_removal")
 def remove_game(data):
     print("backend_removal")
     print(database.get_raw_lobbies())
@@ -348,6 +359,7 @@ def remove_game(data):
     print(database.get_raw_lobbies())
     global all_rooms
     del all_rooms[room_id]
+    emit("remove_players", "Opponent has left the match", to=room_id)
 
 
 
@@ -355,7 +367,7 @@ def remove_game(data):
 
 # print(template)returned_html
 # commented this out on lines 290/296 cuz it was filling up console
-@socketio.on("wait_to_start_game") # in loadingsceern.html line 23 
+@socketio.on("wait_to _start_game") # in loadingsceern.html line 23
 def hang(roomid):   
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
