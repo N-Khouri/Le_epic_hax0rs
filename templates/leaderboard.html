@@ -18,7 +18,7 @@
     <img src="\static\images\HeadsTails.jpeg" class="leaderboard-image-theme">
     <div class="leaderboard-title">
         <h2> Players with the most wins</h2>
-        <input class="leaderboard-search" placeholder="SEARCH PLAYER" id="search" oninput="search()">
+        <!-- <input  class="leaderboard-search" placeholder="SEARCH PLAYER" id="search" oninput="search"> -->
         <table>
             <thead>
                 <tr>
@@ -45,21 +45,22 @@
     </div>            
 </body>
 
-<!--
-<script>
+<!-- <script>
     function search(){
+        console.log("this works i think")
         var input = document.getElementById('search').value;
-        const tr = document.getElementById('tr');
+        console.log("input -> ", input)
+        const tr = document.getElementsByTagName('tr');
         for(let i=1; i < tr.length; i++){
             if(!tr[i].children[1].children[1].innerHTML.toLowerCase().includes(text.toLowerCase())){
                 tr[i].style.display = "none";
+                console.log("whatever -> ", tr[i].style.display)
             }
             else{
-                tr[i].style.display = " ";
+                tr[i].style.display = "";
             }
         }
     }
-</script>
--->
+</script> -->
 </html>
 
