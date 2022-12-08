@@ -62,8 +62,8 @@ def render_leaderboard():
     get_cookie = check_and_get_cookie()
     if get_cookie[0]:
         if request.method == 'GET':
-            database.update_leaderboard()
-            all_players = database.all_users()
+            all_players = database.update_leaderboard()
+            #all_players = database.all_users()
             return render_template('leaderboard.html', players=all_players)
     else:
         return redirect(url_for('login'))
