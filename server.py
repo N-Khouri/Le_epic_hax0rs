@@ -453,6 +453,14 @@ def set_tails():
     print(player_choice)
     # , will constantly update players choice when clicked on
 
+@socketio.on("leaderboard_update_won")
+def update_leaderboard_won(username):
+    database.increment_score(username)
+    database.increment_games(username)
+
+@socketio.on("leaderboard_update_lost")
+def update_leaderboard_lost(username):
+    database.increment_games(username)
 
 if __name__ == '__main__':
     host = "0.0.0.0"

@@ -60,10 +60,12 @@ function randomColor() {
 
 // Checks win condition
 function checkWinner() {
-    if (playerChoice === outcome) {
+    if (playerChoice === outcome) {         // Won
+        socket.emit("leaderboard_update_won", myUsername)
         document.getElementById("outcome").innerHTML = "You have: WON :D";
         AUGH.play();
-    } else {
+    } else {                                // Lost
+        socket.emit("leaderboard_update_lost", myUsername)
         document.getElementById("outcome").innerHTML = "You have: LOST >:( BOO YOU SUCK!";
         womp.play();
     }
