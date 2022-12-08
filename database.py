@@ -106,10 +106,12 @@ def add_score(username, decider):
 # Functionality -> It gets all the users and turns them into python readable, drops the current collection in the leaderboard, adds the new sorted list into the collection.
 def update_leaderboard():
     db_users = all_users()
-    print(db_users)
     readable = sorted(db_users, key=lambda key: key["score"])
-    print(readable)
+    rank = 1
     readable.reverse()
+    for playerEntry in readable:
+        playerEntry.update({"rank": rank})
+        rank += 1
     readable = readable[:10]
     return readable
 
