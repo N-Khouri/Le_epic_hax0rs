@@ -25,6 +25,8 @@ function headsFunction(info){// testing headsFunction(socket.socket) in headstai
     document.getElementById("choice").innerHTML = "You chose: Heads";
     playerChoice = heads;
     socket.emit("heads")
+    socket.emit("check_for_other_user_input")
+
     // startFlipTimer();
     }
     else{return;}
@@ -38,7 +40,10 @@ function tailsFunction(info){ // testing tailsFunction(socket.roomid) in headsta
     document.getElementById("choice").innerHTML = "You chose: Tails";
     playerChoice = tails;
     socket.emit("tails")
-    // startFlipTimer();
+    socket.emit("check_for_other_user_input")
+
+
+    
     }
     else{}
 }
@@ -166,3 +171,7 @@ socket.on("frontend_removal", function(data){
 
 //document.getElementById("coinValue").innerHTML = "Heads";
 //document.getElementById("coinValue").innerHTML = "Tails";
+
+socket.on("start_game", function(data){
+    startFlipTimer();  
+})

@@ -13,6 +13,7 @@
             const roomText = document.getElementById("room");
             const room_id = roomText.value;
             socket.emit("join", room_id);
+            socket.emit("wait_to_start_game", room_id)
         }
 
         socket.on("existent_lobby", function() {

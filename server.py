@@ -21,7 +21,6 @@ socketio = SocketIO(app, async_mode=async_mode)
 all_rooms = {}
 player_in_room = {} # {username: roomid}
 player_choice = {} # {username: choice} (choice = heads/tails.tostring)
-game_tracker = {}  # {roomid: {username1: choice, username2: choice}
 
 
 def check_and_get_cookie():
@@ -357,46 +356,34 @@ def remove_game(data):
 # print(template)returned_html
 # commented this out on lines 290/296 cuz it was filling up console
 @socketio.on("wait_to_start_game") # in loadingsceern.html line 23 
-def hang(data):
-    print("data is")
-    print(data)
-    
+def hang(roomid):   
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
-    player_in_room[get_username] = data
-    print(player_in_room)
-
-    while True:
-        players_in_room = all_rooms[data] #get players in room, this will throw an error in console but u can still click on ready and do everything else
-        if players_in_room == 1: # reset to 2 later on, testing for 1 person as of now
-            get_cookie = check_and_get_cookie()
-            get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-            global player_choice 
-            if len(player_choice) > 0:
-                get_choice = player_choice[get_username].get("choice")
-                get_roomid = player_choice[get_username].get("room_id")
+    player_in_room[get_username] = roomid #puts player in 
+    # print(player_in_room)
 
 
-                if  get_choice == "heads":
-                    print("HEADS")
-                    print(player_choice) # {'a': {'room_id': '689', 'choice': 'heads'}}
-                    player_choice[get_username] = {"room_id": get_roomid, "choice": ""}# reset to empty string so it doesnt looping
-                    print(player_choice) # {'a': {'room_id': '689', 'choice': ''}}
+@socketio.on("check_for_other_user_input")
+def check():
+    get_cookie = check_and_get_cookie()
+    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+    global player_choice
+    print(player_choice)
+    grab_roomid = player_choice[get_username]['room_id']  # {'a': {'room_id': '329', 'choice': 'heads'}}
+    print("grab roomid is: " + str(grab_roomid))
+    grab_player_choice = player_choice[get_username]['choice']
+    for key, val in player_choice.items(): # key = 'a', val = {'room_id': '329', 'choice': 'heads'}
+        if key != get_username: 
+            roomid = val["room_id"]
+            choice = val["choice"]
+            if grab_roomid == roomid:
+                if choice == "heads" or choice == "tails":
+                    print("key is: " + str(key))
+                    print("val is: " + str(val))
+                    emit("start_game", {get_username: grab_player_choice, key: choice}, room=roomid)
+        
 
-                    
-
-
-                elif get_choice == "tails":
-                    print("TAILS")
-                    print(player_choice) # {'a': {'room_id': '689', 'choice': 'TAILS'}}
-                    player_choice[get_username] = {"room_id": get_roomid, "choice": ""}# reset to empty string so it doesnt looping
-                    print(player_choice) # {'a': {'room_id': '689', 'choice': ''}}
-
-                    
-
-#player_choice = {} # {username: choice} (choice = heads/tails.tostring)
-#game_tracker = {}  # {roomid: {username1: choice, username2: choice}
 
 
 @socketio.on("heads")
@@ -405,8 +392,8 @@ def set_heads():
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
     roomid = player_in_room[get_username]
-    global player_choice# player_choice[roomid] = "heads" # update dict to be {player1: (roomid: choice), player2: (roomid: choice))
-    player_choice[get_username] = {"room_id": roomid, "choice": "heads"}
+    global player_choice
+    player_choice[get_username] = {"room_id": roomid, "choice": "heads"} # {'a': {'room_id': '329', 'choice': 'heads'}}
     
 
 @socketio.on("tails")
