@@ -4,37 +4,49 @@
     <meta charset="utf-8">
     <title> Main Menu </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+            integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+            crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-</head>
-<body>
-    
-    <button class="coinChoice" id="ready" onClick="readyCheck()"> Ready </button>
-
-
-    <a href= "main_menu">
-        <button id="exitGame" onclick=initiate_disconnection(room_id)> Exit to main menu</button>
-    </a>
-
     <script type="text/javascript">
         const socket = io();
         const room_id = "{{lobby_name}}";
-        socket.emit("create_lobby", room_id)
-        socket.emit("wait_to_start_game", room_id)
+        socket.emit("create_lobby", room_id);
 
-        document.getElementById("exitGame").addEventListener("click", function(){
-            initiate_disconnection(room_id);
+        // socket.emit("wait_to_start_game", room_id);
+
+        function removeStatus(){
+            readyCheck(room_id);
+        }
+
+        socket.on("ready_status", (data) => {
+            document.getElementById("change").innerText = "";
+            document.getElementById("change").innerText = data;
+
+        });
+
+        socket.on("remove_status", () => {
+            document.getElementById("playerStatus").remove();
         })
     </script>
-    <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
+</head>
+<body>
 
-    <div class = "BasicMenu" id="playerStatus">
+<button class="coinChoice" id="ready" onclick=removeStatus()> Ready</button>
+
+
+<a href="main_menu">
+    <button id="exitGame" onclick=initiate_disconnection(room_id)> Exit to main menu</button>
+</a>
+
+<script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
+
+<div class="BasicMenu" id="playerStatus">
     <p>lobby name: {{lobby_name}}</p>
-    <p>please wait for other user to join</p>
-    </div>
+    <p id="change">please wait for other user to join</p>
+</div>
 
-    <div id="gameContainer">
 
-    </div>
+<div id="gameContainer"></div>
 </body>
 </html>

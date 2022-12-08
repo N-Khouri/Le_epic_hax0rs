@@ -4,58 +4,95 @@
     <meta charset="utf-8">
     <title> Main Menu </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+            integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+            crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
     <script type="text/javascript">
         const socket = io();
-        function joinRoom() {
-            const roomText = document.getElementById("room");
-            const room_id = roomText.value;
-            socket.emit("join", room_id);
-            socket.emit("wait_to_start_game", room_id)
+
+        function check(room_id) {
+            socket.emit("check_room", room_id);
         }
 
-        socket.on("existent_lobby", function() {
-
-            document.getElementById("joinRoom").parentNode.removeChild(document.getElementById("joinRoom"));
-
-            socket.emit("getHTMLPage", "getLoadingScreen")
-
-            socket.on("returned_html", function (data) {
-                console.log(data);
-                document.getElementById("exitGame").parentNode.removeChild(document.getElementById("exitGame"));
-                document.getElementById("gameContainer").innerHTML = data["data"];
-            });
+        socket.on("render_template", (data) => {
+            document.getElementById("remove").remove();
+            document.getElementById("loading_screen").innerHTML = data;
         });
 
-        socket.on("lobby_nonexistent", function(data){
-            console.log(data);
-
-            document.getElementById("joinRoom").parentNode.removeChild(document.getElementById("joinRoom"));
-
-            document.getElementById("playerStatus").innerText = data["data"];
+        socket.on("nonexistent_lobby", (data) => {
+            document.getElementById("joinRoom").innerText = data;
         });
     </script>
-    <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>
-</head>
-<body>
-    <a href= "main_menu">
-        <button id="exitGame"> Exit to main menu</button>
-    </a>
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"-->
+    <!--            integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="-->
+    <!--            crossorigin="anonymous"></script>-->
+    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
 
-    <div class = "BasicMenu" id="joinRoom">
+    <!--    <script type="text/javascript">-->
+    <!--        const socket = io();-->
+    <!--        var store_room_id = 0;-->
+
+    <!--        function removeStatus(){-->
+    <!--            document.getElementById("playerStatus").remove();-->
+    <!--            readyCheck();-->
+    <!--        }-->
+
+    <!--        function store() {-->
+    <!--            store_room_id = document.getElementById("room").value;-->
+    <!--            console.log(store_room_id);-->
+    <!--            joinRoom(store_room_id);-->
+    <!--        }-->
+
+    <!--        socket.on("existent_lobby", function () {-->
+
+    <!--            document.getElementById("joinRoom").remove();-->
+
+    <!--            socket.emit("getHTMLPage", ["getLoadingScreen", store_room_id]);-->
+
+    <!--            socket.on("lobby_p2", function (data) {-->
+    <!--                document.getElementById("exit").remove();-->
+    <!--                document.getElementById("holder").innerHTML = data["data"];-->
+    <!--            });-->
+    <!--        });-->
+
+    <!--        socket.on("lobby_nonexistent", function (data) {-->
+    <!--            console.log(data);-->
+
+    <!--            document.getElementById("joinRoom").remove();-->
+
+
+    <!--            document.getElementById("holder").innerText = data["data"];-->
+    <!--        });-->
+
+    <!--        socket.on("ready_status", (data) => {-->
+    <!--            document.getElementById("change").innerText = "";-->
+    <!--            document.getElementById("change").innerText = data;-->
+
+    <!--        })-->
+    <!--    </script>-->
+    <!--    <script type="text/javascript" src="{{ url_for('static', filename='script/HeadsTails.js') }}"></script>-->
+
+</head>
+<div id="remove">
+    <body>
+    <div id="exit">
+        <a href="main_menu">
+            <button id="exitGame"> Exit to main menu</button>
+        </a>
+    </div>
+
+    <div class="BasicMenu" id="joinRoom">
         <p> Specify what room you wish to join</p>
         <input type="text" id="room" name="room">
-        <input type="button" onClick="joinRoom()" name="Join Room">
+        <input type="button" name="Join Room" onclick=check(document.getElementById("room").value)>
     </div>
 
-    <div id="playerStatus">
+    <div id="holder"></div>
+    </body>
 
-    </div>
+</div>
 
-    <div id="gameContainer">
-
-    </div>
-</body>
+<div id="loading_screen">
+</div>
 </html>

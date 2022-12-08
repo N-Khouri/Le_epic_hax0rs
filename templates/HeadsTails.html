@@ -5,7 +5,9 @@
     <title>HEADS AND TAILS</title>
 </head>
 <body>
+<div id="case_disconnection"></div>
 
+<div id="wrap_game">
     <p id="score"> score </p>
     <p id="timerNumber"> Timer:0 </p>
     <p class="LUL"> ^ this man does NOT know how to handle truncation errors ^</p>
@@ -15,23 +17,23 @@
     <p class="outcome" id="outcome"> You have: </p>
     <div class="board">
 
-        <button class="coinChoice" id="heads" onclick="headsFunction(socket.socket)"> Heads </button>
-        <button class="coinChoice" id="tails" onclick="tailsFunction(socket.data)"> Tails </button>
+        <button class="coinChoice" id="heads" onclick="headsFunction(socket.socket)"> Heads</button>
+        <button class="coinChoice" id="tails" onclick="tailsFunction(socket.data)"> Tails</button>
         <p class="coinValue" id="coinValue"></p>
     </div>
 
-        <script type="text/javascript">
-            socket.on('render_message',function(data){
-                $('#messages').append($('<p>').text(data));
-            });
+    <script type="text/javascript">
+        socket.on('render_message', function (data) {
+            $('#messages').append($('<p>').text(data));
+        });
 
-        </script>
-        <div id="messages">
+    </script>
+    <div id="messages">
 
-        </div>
+    </div>
 
     <input type="text" id="message_box" placeholder="Message">
     <button id="sendBTN" onclick="sendMessage()">Send</button>
-
+</div>
 </body>
 </html>

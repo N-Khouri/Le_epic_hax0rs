@@ -1,8 +1,6 @@
 pymongo
 flask
 flask-socketio
-flask_sock
-flask_session
 
 #socketio
 # hashlib

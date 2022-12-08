@@ -2,10 +2,8 @@ import datetime
 from flask import Flask, render_template, request, session
 from flask import Flask, redirect, url_for, request
 from flask import Flask, render_template, make_response
-from flask_socketio import *
 
-from flask_socketio import SocketIO
-from flask_session import Session
+from flask_socketio import SocketIO, emit, join_room, rooms, send
 
 import html
 import random
@@ -19,23 +17,20 @@ app.secret_key = '\rf\xcb\xd4f\x085L\x99\xbc\xb5\xc1|!W\xc2m\xa6\x91\x9d\xa8(n\x
 socketio = SocketIO(app, async_mode=async_mode)
 
 all_rooms = {}
-player_in_room = {} # {username: roomid}
-player_choice = {} # {username: choice} (choice = heads/tails.tostring)
+player_in_room = {}  # {username: roomid}
+player_choice = {}  # {username: choice} (choice = heads/tails.tostring)
+
+ready_players = {}
+connected_users = {}
 
 
 def check_and_get_cookie():
     active_cookie = False  # assume cookie is always wrong until proven otherwise
     get_cookie = ""
-    for line in request.headers:  # loop thru headers
-        if "Cookie" in line:  # key val pair: Cookie: (python, userID)
-            for i in line:  # loop thru cookie line
-                x = str(i)
-                for j in x.split(";"):  # loop thru tuple
-                    if "userID=" in j:
-                        get_cookie = j.replace("userID=", '').replace(" ", "")
-                        if get_cookie is not None:
-                            active_cookie = database.check_cookie(get_cookie)
-    return (active_cookie, get_cookie)
+    if "userID" in request.cookies:
+        get_cookie = request.cookies["userID"]
+        active_cookie = database.check_cookie(get_cookie)
+    return active_cookie, get_cookie
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -62,7 +57,7 @@ def render_leaderboard():
         if request.method == 'GET':
             database.update_leaderboard()
             all_players = database.all_users()
-            return render_template('leaderboard.html', players = all_players)
+            return render_template('leaderboard.html', players=all_players)
     else:
         return redirect(url_for('login'))
 
@@ -75,7 +70,8 @@ def playerProfile():
             get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
             get_playerscore = database.get_db_info_via_cookie(get_cookie[1], "score")
             get_playertotal = database.get_db_info_via_cookie(get_cookie[1], "total games")
-            return render_template('playerProfile.html', username = html.unescape(get_username), score=get_playerscore, total=get_playertotal)
+            return render_template('playerProfile.html', username=html.unescape(get_username), score=get_playerscore,
+                                   total=get_playertotal)
         else:
             return redirect(url_for('login'))
 
@@ -118,7 +114,8 @@ def main_menu(from_login=0, username=None):
             if request.method == 'GET':
                 get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
                 print(get_username)
-                return render_template('main_menu.html', username = html.unescape(get_username), user=database.get_lobbies())
+                return render_template('main_menu.html', username=html.unescape(get_username),
+                                       user=database.get_lobbies())
         else:
             return redirect(url_for("login"))
 
@@ -154,7 +151,6 @@ def login():
 
         _username = html.escape(input_username)
         _password = html.escape(input_password)
-
 
         if request.form.__contains__("register"):
             print(type(_password))
@@ -222,12 +218,13 @@ def create_lobby():
             database.insert_lobby(lobby_number, get_username)
             print("lobbies")
             print(database.get_lobbies())
+
+            global ready_players
+            ready_players[lobby_number] = 0
+
             return render_template('loading_screen.html', lobby_name=lobby_number)
     else:
         return redirect(url_for('login'))
-    # elif request.method == 'POST':
-    #     database.lobbies.delete_one({})
-    #     return render_template('main_menu.html',user=list((database.lobbies.find({}, {'_id':False}))))
 
 
 @app.route("/loading_screen", methods=['POST'])
@@ -252,7 +249,7 @@ def waitingLobby():
             else:
                 return render_template('main_menu.html', lobbyDNE="lobby was not found")
     else:
-        return render_leaderboard('incorret_cookie.html')
+        return render_leaderboard('incorrect_cookie.html')
 
 
 @app.route('/join_lobby', methods=['GET', 'POST'])
@@ -262,12 +259,27 @@ def join_lobby():
         if request.method == 'GET':
             return render_template('joinLobby_screen.html')
     else:
-        return render_leaderboard('incorret_cookie.html')
+        return render_leaderboard('incorrect_cookie.html')
 
 
 @socketio.on('ready')
 def response():
     emit("player_ready", {'data': str(session["username"]) + " is ready."}, broadcast=True)
+
+
+@socketio.on("check_room")
+def check_existence(data):
+    global all_rooms
+    if data in all_rooms:
+        file = open("templates/loading_screen.html", 'r')
+        template = file.read()
+        get_index = template.find("const socket = io();")
+        new_template = template[get_index + len("const socket = io();"): template.find("</html>")]
+        new_template = "<script type=\"text/javascript\">" + new_template
+        new_template = new_template.replace("{{lobby_name}}", data)
+        emit("render_template", new_template)
+    else:
+        return emit("nonexistent_lobby", "Lobby does not exist.")
 
 
 @socketio.on('create_lobby')
@@ -282,35 +294,45 @@ def lobby(roomid):
 
 
 @socketio.on('join')
-def join_lobby(id):
-    id = html.escape(id)
+def join_lobby(room_id):
+    _id = html.escape(room_id)
     print("joined room")
-    print(id)
+    print(_id)
     global all_rooms
-    if id not in all_rooms.keys():
+    if _id not in all_rooms.keys():
         emit("lobby_nonexistent", {'data': "Lobby does not exist. Go fuck yourself."})
     else:
-        join_room(id)
+        join_room(_id)
         print(rooms())
-        all_rooms[id] = all_rooms[id] + 1
+        all_rooms[_id] = all_rooms[_id] + 1
         print(all_rooms)
         emit("existent_lobby")
 
 
 @socketio.on('getHTMLPage')
 def sendHTML(data):
-    if data == "getGame":
-        text_file = open("templates/HeadsTails.html", "r")
-        template = text_file.read()
-        # print(template)returned_html
-        emit("returned_html", {'data': template}, broadcast=True)
-        text_file.close()
-    else:
-        text_file = open("templates/loading_screen.html", "r")
-        template = text_file.read()
-        # print(template)
-        emit("returned_html", {'data': template}, broadcast=True)
-        text_file.close()
+    if isinstance(data, dict) and data["game"] == "getGame":
+        room_id = data["room"]
+        global ready_players
+        ready_players[room_id] = ready_players[room_id] + 1
+        if ready_players[room_id] != 2:
+            emit("ready_status", "Waiting for all opponents to ready up.", room=room_id, broadcast=True)
+
+            counter = 0
+            while ready_players[room_id] != 2:
+                if counter == 100_000_000:
+                    emit("ready_status",
+                         "Still waiting for one player to press ready. Can you hurry up dawg and press Ready...",
+                         room=room_id, broadcast=True)
+
+                counter += 1
+                continue
+        emit("remove_status")
+        emit("returned_html", {'data': render_template("HeadsTails.html")})
+    elif isinstance(data, list):
+        render_lobby = render_template("loading_screen.html", lobby_name=data[1])
+
+        emit("lobby_p2", {'data': render_lobby})
 
 
 @socketio.on('player')
@@ -332,94 +354,83 @@ def handle_message(message):
     emit('render_message', message, broadcast=True)
 
 
-@socketio.on('getUsername')
-def getUsername(route):
+@socketio.on('getUsername_or_deleteLobby')
+def getUsername_or_deleteLobby(_route):
     print("in getUsername")
-    print(route)
+    print(_route)
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
-    construct = {'username': get_username}
 
-    if len(route) == 1:
-        emit(route[0], construct)
+    if len(_route) == 1:
+        emit(_route[0], {'username': get_username})
 
-    elif len(route) == 2:
-        print("sending the 2 dict")
-        construct['room_id'] = route[1]
-        print(construct)
-        remove_game(construct)
+    elif len(_route) == 2:  # Delete the lobby and emit to disconnect all players
+        database.delete_lobby(get_username)
 
-def remove_game(data):
-    print("backend_removal")
-    print(database.get_raw_lobbies())
-    print(data)
-    username = data['username']
-    room_id = data['room_id']
-    database.delete_lobby(username)
-    print(database.get_raw_lobbies())
-    global all_rooms
-    del all_rooms[room_id]
-    emit("remove_players", "Opponent has left the match", to=room_id)
+        global all_rooms
+        del all_rooms[_route[1]]
+
+        global ready_players
+        del ready_players[_route[1]]
+
+        emit("remove_players", "Opponent has left the match. Please return to the main menu.", room=_route[1])
 
 
-
-
-
-# print(template)returned_html
 # commented this out on lines 290/296 cuz it was filling up console
-@socketio.on("wait_to_start_game") # in loadingsceern.html line 23, joinLobby_screen.html line 16
-def hang(roomid):   
+@socketio.on("wait_to_start_game")  # in loadingsceern.html line 23, joinLobby_screen.html line 16
+def hang(roomid):
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
-    player_in_room[get_username] = roomid # when a player joins a room, use dict to keep track of the room the player is in
+    player_in_room[
+        get_username] = roomid  # when a player joins a room, use dict to keep track of the room the player is in
     # print(player_in_room)
 
 
-@socketio.on("check_for_other_user_input") #called on after everytime a player chooses heads/tails, headstails.js lines 41, 28
+@socketio.on(
+    "check_for_other_user_input")  # called on after everytime a player chooses heads/tails, headstails.js lines 41, 28
 def check():
     get_cookie = check_and_get_cookie()
-    get_username = database.get_db_info_via_cookie(get_cookie[1], "username") # current player
+    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")  # current player
     global player_choice
-    grab_roomid = player_choice[get_username]['room_id']  #player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}, grab the room id
-    grab_player_choice = player_choice[get_username]['choice'] # grab choice
-    for key, val in player_choice.items(): # key = 'a', val = {'room_id': '329', 'choice': 'heads'}, loop thru every players choice
-        if key != get_username: # skip current player calling this function
+    grab_roomid = player_choice[get_username][
+        'room_id']  # player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}, grab the room id
+    grab_player_choice = player_choice[get_username]['choice']  # grab choice
+    for key, val in player_choice.items():  # key = 'a', val = {'room_id': '329', 'choice': 'heads'}, loop thru every players choice
+        if key != get_username:  # skip current player calling this function
             roomid = val["room_id"]
             choice = val["choice"]
             if grab_roomid == roomid:
                 if choice == "heads" or choice == "tails":
                     # print("key is: " + str(key))
                     # print("val is: " + str(val))
-                    emit("start_game", {get_username: grab_player_choice, key: choice}, room=roomid) # line 169 headstails.js
-                    #dict isnt used but this is how i was thinking we wud keep track of both players choices to template in who won and add to db
-        
+                    emit("start_game", {get_username: grab_player_choice, key: choice},
+                         room=roomid)  # line 169 headstails.js
+                    # dict isnt used but this is how i was thinking we wud keep track of both players choices to template in who won and add to db
 
 
-
-@socketio.on("heads") # called in headsFunction
+@socketio.on("heads")  # called in headsFunction
 def set_heads():
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
-    roomid = player_in_room[get_username] # player room dict is set as {username: roomid}, done in line 375
+    roomid = player_in_room[get_username]  # player room dict is set as {username: roomid}, done in line 375
     global player_choice
-    player_choice[get_username] = {"room_id": roomid, "choice": "heads"} # player_choice dict = {'a': {'room_id': '329', 'choice': 'heads'}}
+    player_choice[get_username] = {"room_id": roomid,
+                                   "choice": "heads"}  # player_choice dict = {'a': {'room_id': '329', 'choice': 'heads'}}
     # will constantly update players choice when clicked on
-    
 
-@socketio.on("tails")# called in tailsFunction
+
+@socketio.on("tails")  # called in tailsFunction
 def set_tails():
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
-    roomid = player_in_room[get_username]# player room dict is set as {username: roomid}, done in line 375
+    roomid = player_in_room[get_username]  # player room dict is set as {username: roomid}, done in line 375
     global player_choice
-    player_choice[get_username] = {"room_id": roomid, "choice": "tails"} # player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}
-    #, will constantly update players choice when clicked on
-    
-
-
+    player_choice[get_username] = {"room_id": roomid,
+                                   "choice": "tails"}  # player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}
+    # , will constantly update players choice when clicked on
 
 
 if __name__ == '__main__':
