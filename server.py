@@ -367,58 +367,57 @@ def remove_game(data):
 
 # print(template)returned_html
 # commented this out on lines 290/296 cuz it was filling up console
-@socketio.on("wait_to _start_game") # in loadingsceern.html line 23
+@socketio.on("wait_to_start_game") # in loadingsceern.html line 23, joinLobby_screen.html line 16
 def hang(roomid):   
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
-    player_in_room[get_username] = roomid #puts player in 
+    player_in_room[get_username] = roomid # when a player joins a room, use dict to keep track of the room the player is in
     # print(player_in_room)
 
 
-@socketio.on("check_for_other_user_input")
+@socketio.on("check_for_other_user_input") #called on after everytime a player chooses heads/tails, headstails.js lines 41, 28
 def check():
     get_cookie = check_and_get_cookie()
-    get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+    get_username = database.get_db_info_via_cookie(get_cookie[1], "username") # current player
     global player_choice
-    print(player_choice)
-    grab_roomid = player_choice[get_username]['room_id']  # {'a': {'room_id': '329', 'choice': 'heads'}}
-    print("grab roomid is: " + str(grab_roomid))
-    grab_player_choice = player_choice[get_username]['choice']
-    for key, val in player_choice.items(): # key = 'a', val = {'room_id': '329', 'choice': 'heads'}
-        if key != get_username: 
+    grab_roomid = player_choice[get_username]['room_id']  #player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}, grab the room id
+    grab_player_choice = player_choice[get_username]['choice'] # grab choice
+    for key, val in player_choice.items(): # key = 'a', val = {'room_id': '329', 'choice': 'heads'}, loop thru every players choice
+        if key != get_username: # skip current player calling this function
             roomid = val["room_id"]
             choice = val["choice"]
             if grab_roomid == roomid:
                 if choice == "heads" or choice == "tails":
-                    print("key is: " + str(key))
-                    print("val is: " + str(val))
-                    emit("start_game", {get_username: grab_player_choice, key: choice}, room=roomid)
+                    # print("key is: " + str(key))
+                    # print("val is: " + str(val))
+                    emit("start_game", {get_username: grab_player_choice, key: choice}, room=roomid) # line 169 headstails.js
+                    #dict isnt used but this is how i was thinking we wud keep track of both players choices to template in who won and add to db
         
 
 
 
-@socketio.on("heads")
+@socketio.on("heads") # called in headsFunction
 def set_heads():
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
-    roomid = player_in_room[get_username]
+    roomid = player_in_room[get_username] # player room dict is set as {username: roomid}, done in line 375
     global player_choice
-    player_choice[get_username] = {"room_id": roomid, "choice": "heads"} # {'a': {'room_id': '329', 'choice': 'heads'}}
+    player_choice[get_username] = {"room_id": roomid, "choice": "heads"} # player_choice dict = {'a': {'room_id': '329', 'choice': 'heads'}}
+    # will constantly update players choice when clicked on
     
 
-@socketio.on("tails")
+@socketio.on("tails")# called in tailsFunction
 def set_tails():
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
-    roomid = player_in_room[get_username]
+    roomid = player_in_room[get_username]# player room dict is set as {username: roomid}, done in line 375
     global player_choice
-    player_choice[get_username] = {"room_id": roomid, "choice": "tails"} # {'a': {'room_id': '329', 'choice': 'heads'}}
-
-
-
+    player_choice[get_username] = {"room_id": roomid, "choice": "tails"} # player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}
+    #, will constantly update players choice when clicked on
+    
 
 
 

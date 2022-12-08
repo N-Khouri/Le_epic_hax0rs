@@ -26,8 +26,6 @@ function headsFunction(info){// testing headsFunction(socket.socket) in headstai
     playerChoice = heads;
     socket.emit("heads")
     socket.emit("check_for_other_user_input")
-
-    // startFlipTimer();
     }
     else{return;}
 }
@@ -41,9 +39,6 @@ function tailsFunction(info){ // testing tailsFunction(socket.roomid) in headsta
     playerChoice = tails;
     socket.emit("tails")
     socket.emit("check_for_other_user_input")
-
-
-    
     }
     else{}
 }
