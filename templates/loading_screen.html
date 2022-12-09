@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <title> Main Menu </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script type="application/javascript" src="{{ url_for('static', filename='script/http_cdnjs.cloudflare.com_ajax_libs_socket.io_4.0.1_socket.io.js') }}"
-            integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="></script>
-
-    <script type="application/javascript" src="{{ url_for('static', filename='script/http_ajax.googleapis.com_ajax_libs_jquery_1.12.4_jquery.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+            integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
     <script type="text/javascript">
         const socket = io();
