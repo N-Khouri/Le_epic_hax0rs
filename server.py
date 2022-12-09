@@ -1,15 +1,13 @@
-import datetime
-from flask import Flask, render_template, request, session
-from flask import Flask, redirect, url_for, request
+from flask import session
+from flask import redirect, url_for, request
 from flask import Flask, render_template, make_response
 
-from flask_socketio import SocketIO, emit, join_room, rooms, send
+from flask_socketio import SocketIO, emit, join_room, rooms
 
 import html
 import random
 import database
 import passwordSec
-import json
 
 async_mode = None
 app = Flask(__name__)
@@ -17,11 +15,16 @@ app.secret_key = '\rf\xcb\xd4f\x085L\x99\xbc\xb5\xc1|!W\xc2m\xa6\x91\x9d\xa8(n\x
 socketio = SocketIO(app, async_mode=async_mode)
 
 all_rooms = {}
-player_in_room = {}  # {username: roomid}
+player_in_room = {}  # {username: room id}
 player_choice = {}  # {username: choice} (choice = heads/tails.tostring)
 
 ready_players = {}
 connected_users = {}
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return 'The requested URL/path does not exist.', 404
 
 
 def check_and_get_cookie():
@@ -32,8 +35,9 @@ def check_and_get_cookie():
         active_cookie = database.check_cookie(get_cookie)
     return active_cookie, get_cookie
 
+
 def flip_coin():
-    randInt = random.randint(0,100)
+    randInt = random.randint(0, 100)
     if randInt < 50:
         return "Heads"
     else:
@@ -48,22 +52,12 @@ def index():
         return render_template('login.html')
 
 
-# @app.route("/HeadsTails", methods=['POST', 'GET'])
-# def game():
-#     if check_and_get_cookie():
-#         if request.method == 'GET':
-#             return render_template('HeadsTails.html')
-#     else:
-#         return redirect(url_for('login'))
-
-
 @app.route("/leaderboard", methods=['GET'])
 def render_leaderboard():
     get_cookie = check_and_get_cookie()
     if get_cookie[0]:
         if request.method == 'GET':
             all_players = database.update_leaderboard()
-            #all_players = database.all_users()
             return render_template('leaderboard.html', players=all_players)
     else:
         return redirect(url_for('login'))
@@ -113,7 +107,6 @@ def main_menu(from_login=0, username=None):
         print(url_for("main_menu"))
         resp.set_cookie('userID', database.create_and_update_hashed_cookie(username))
 
-        print("here is were it breaks.")
         return resp
     elif from_login == 0 and "userID" in request.cookies:
         get_cookie = check_and_get_cookie()
@@ -125,12 +118,6 @@ def main_menu(from_login=0, username=None):
                                        user=database.get_lobbies())
         else:
             return redirect(url_for("login"))
-
-
-@app.route('/nuke', methods=['GET', 'POST'])
-def nuke():
-    database.clear_db()
-    return redirect(url_for('login'))
 
 
 @app.route('/logout', methods=['GET'])
@@ -177,10 +164,6 @@ def login():
             if get_salt != 0:
                 verify = passwordSec.verify(_username, _password)
                 if verify == 1:
-                    # template = render_template('main_menu.html', username = html.unescape(_username), user=database.get_lobbies())
-                    # resp = make_response(template)
-                    # resp.set_cookie('userID', database.create_and_update_hashed_cookie(_username))
-                    # resp.headers["from_login"] = 1
 
                     return main_menu(1, _username)
                 elif isinstance(verify, str):
@@ -193,18 +176,9 @@ def login():
                 return render_template('does_not_exist.html')
 
 
-######################### TESTING PURPOSES ONLY #######################
-
 @app.route('/users', methods=['GET', 'POST'])
 def print_users():
     return database.print_users_db()
-
-
-@app.route('/all', methods=['GET', 'POST', 'DELETE'])  # delete thru postman
-def empty_users():
-    if request.method == 'DELETE':
-        database.clear_db()
-    return "DATABASE WAS DESTROYED"
 
 
 @app.route('/dashboard/<name>/<password>')
@@ -285,8 +259,10 @@ def check_existence(data):
         new_template = "<script type=\"text/javascript\">" + new_template
         new_template = new_template.replace("{{lobby_name}}", data)
 
-        find_link = new_template.find("<script type=\"text/javascript\" src=\"{{ url_for('static', filename='script/HeadsTails.js') }}\"></script>")
-        new_template = new_template[:find_link] + new_template[find_link + len("<script type=\"text/javascript\" src=\"{{ url_for('static', filename='script/HeadsTails.js') }}\"></script>"):]
+        find_link = new_template.find(
+            "<script type=\"text/javascript\" src=\"{{ url_for('static', filename='script/HeadsTails.js') }}\"></script>")
+        new_template = new_template[:find_link] + new_template[find_link + len(
+            "<script type=\"text/javascript\" src=\"{{ url_for('static', filename='script/HeadsTails.js') }}\"></script>"):]
         join_room(data)
         emit("render_template", new_template)
     else:
@@ -387,7 +363,7 @@ def getUsername_or_deleteLobby(_route):
         del ready_players[_route[1]]
 
         emit("remove_players", "Opponent has left the match. Please return to the main menu.", room=_route[1])
-    
+
     elif len(_route) == 3:
         emit("username_in_js", {'username': get_username})
 
@@ -398,20 +374,22 @@ def hang(roomid):
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
     global player_in_room
-    player_in_room[get_username] = roomid  # when a player joins a room, use dict to keep track of the room the player is in
-    # print(player_in_room)
+    player_in_room[
+        get_username] = roomid  # when a player joins a room, use dict to keep track of the room the player is in
 
 
-@socketio.on("check_for_other_user_input")  # called on after everytime a player chooses heads/tails, headstails.js lines 41, 28
+@socketio.on(
+    "check_for_other_user_input")  # called on after everytime a player chooses heads/tails, headstails.js lines 41, 28
 def check():
     get_cookie = check_and_get_cookie()
     get_username = database.get_db_info_via_cookie(get_cookie[1], "username")  # current player
     global player_choice
     print("This is bs")
     print(player_choice)
-    grab_roomid = player_choice[get_username]['room_id']  # player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}, grab the room id
+    grab_roomid = player_choice[get_username][
+        'room_id']  # player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}, grab the room id
     grab_player_choice = player_choice[get_username]['choice']  # grab choice
-    for key, val in player_choice.items():  # key = 'a', val = {'room_id': '329', 'choice': 'heads'}, loop thru every players choice
+    for key, val in player_choice.items():  # key = 'a', val = {'room_id': '329', 'choice': 'heads'}, loop through every player choice
         if key != get_username:  # skip current player calling this function
             roomid = val["room_id"]
             choice = val["choice"]
@@ -422,10 +400,11 @@ def check():
 
                     # Replace this with server side game functionality
                     serverFlipCoin = flip_coin()
-                    emit("start_game", {"player1": get_username, get_username: grab_player_choice, "player2": key, key : choice, "server_flip": serverFlipCoin}, room=roomid)  # line 169 headstails.js
-                    
-                    
-                    # dict isnt used but this is how i was thinking we wud keep track of both players choices to template in who won and add to db
+                    emit("start_game",
+                         {"player1": get_username, get_username: grab_player_choice, "player2": key, key: choice,
+                          "server_flip": serverFlipCoin}, room=roomid)  # line 169 headstails.js
+
+                    # dict isn't used but this is how I was thinking we would keep track of both players choices to template in who won and add to db
 
 
 @socketio.on("heads")  # called in headsFunction
@@ -435,7 +414,8 @@ def set_heads():
     global player_in_room
     roomid = player_in_room[get_username]  # player room dict is set as {username: roomid}, done in line 375
     global player_choice
-    player_choice[get_username] = {"room_id": roomid, "choice": "Heads"}  # player_choice dict = {'a': {'room_id': '329', 'choice': 'heads'}}
+    player_choice[get_username] = {"room_id": roomid,
+                                   "choice": "Heads"}  # player_choice dict = {'a': {'room_id': '329', 'choice': 'heads'}}
     # will constantly update players choice when clicked on
 
 
@@ -448,19 +428,28 @@ def set_tails():
     global player_in_room
     roomid = player_in_room[get_username]  # player room dict is set as {username: roomid}, done in line 375
     global player_choice
-    player_choice[get_username] = {"room_id": roomid, "choice": "Tails"}  # player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}
+    player_choice[get_username] = {"room_id": roomid,
+                                   "choice": "Tails"}  # player_choice dict =  {'a': {'room_id': '329', 'choice': 'heads'}}
     print("this is tails")
     print(player_choice)
     # , will constantly update players choice when clicked on
+
 
 @socketio.on("leaderboard_update_won")
 def update_leaderboard_won(username):
     database.increment_score(username)
     database.increment_games(username)
 
+
 @socketio.on("leaderboard_update_lost")
 def update_leaderboard_lost(username):
     database.increment_games(username)
+
+
+@socketio.on('connect')
+def handle():
+    return print("Successfully connected.")
+
 
 if __name__ == '__main__':
     host = "0.0.0.0"
@@ -470,4 +459,4 @@ if __name__ == '__main__':
 
 # while true for the websocket, only for the websocket, not for htpp requests
 # example https://github.com/miguelgrinberg/flask-sock/blob/main/examples/echo-gevent.py
-# sock for websockt, app.route is an http flask route, only for http req
+# sock for websocket, app.route is a http flask route, only for http req

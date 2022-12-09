@@ -18,8 +18,10 @@ lobbies = database["lobbies"]
 def insert_lobby(lobby_number, username):
     lobbies.insert_one({"lobby": lobby_number, "user": username})
 
+
 def delete_lobby(username):
     lobbies.delete_many({"user": username})
+
 
 def get_lobbies():
     all_lobbies = lobbies.find({})
@@ -28,8 +30,10 @@ def get_lobbies():
         to_return.append(str(i["user"]) + "'s lobby: " + str(i["lobby"]))
     return to_return
 
+
 def get_raw_lobbies():
     return list(lobbies.find({}))
+
 
 ####################################### Verification Usage Only. Don't play with these functions. #######################################
 def insert_salt(username, _salt):
@@ -55,6 +59,7 @@ def get_games(username):
 def get_score(username):
     return users.find_one({"username": username})["score"]
 
+
 #########################################################################################################################################
 
 def increment_score(username):
@@ -70,14 +75,13 @@ def increment_games(username):
 # TLDR -> Inserts a user if the user doesn't exist.
 # Functionality -> Call the DB to find the username. If the DB catches a username with the inputted username then exit; otherwise, insert the username and the password as a record into the users collectiion.
 def insert_user(username, password):
-#     _username = html.escape(username)
-#     _password = html.escape(password)
     lookup = users.find_one({"username": username})
     if lookup != None:
         return 0  # "An account with the inputted username already exists. Please log-in with that account."
     else:
         hash_password = passwordSec.user_hash(username, password)
-        users.insert_one({"username": username, "password": hash_password, "hashed_cookie": b"" , "score": 0, "total games": 0})
+        users.insert_one(
+            {"username": username, "password": hash_password, "hashed_cookie": b"", "score": 0, "total games": 0})
         return 1  # "An account with the username " + username + " has been successfully created."
 
 
@@ -89,10 +93,12 @@ def all_users_username():
         list_to_json.append(i["username"])
     return list_to_json
 
-#call this function to get all the users' information
+
+# call this function to get all the users' information
 def all_users():
     collection = list(users.find({}))
     return collection
+
 
 # Call this function to increment a user's score by 1.
 def add_score(username, decider):
@@ -118,14 +124,6 @@ def update_leaderboard():
 
 ######################### TESTING PURPOSES ONLY #######################
 
-def clear_db():  # for testing purposes only
-    database.drop_collection(users)
-    database.drop_collection(chat)
-    database.drop_collection(salt)
-    database.drop_collection(active_users)
-    database.drop_collection(lobbies)
-
-
 def print_users_db():
     cur = users.find()
     results = list(cur)
@@ -134,9 +132,8 @@ def print_users_db():
         users_list += (line.get("username") + "\r\n")
     return users_list
 
-    ###########################################################################
 
-
+###########################################################################
 
 
 def get_hashed_cookie(cookie_input):
@@ -155,6 +152,7 @@ def get_hashed_cookie(cookie_input):
 def get_db(username):
     return users.find_one({"username": username})
 
+
 def create_and_update_hashed_cookie(username):
     create_token = token_urlsafe(16)
     hashed_token = passwordSec.hash_cookie(create_token)
@@ -162,16 +160,16 @@ def create_and_update_hashed_cookie(username):
     users.update_one({"username": username}, {'$set': {"hashed_cookie": hashed_token}})
     return create_token
 
+
 def check_cookie(cookie):
-    x = get_hashed_cookie(cookie)
-    y = passwordSec.hash_cookie(cookie)
     if get_hashed_cookie(cookie) == passwordSec.hash_cookie(cookie):
         return True
     else:
         return False
 
+
 def get_db_info_via_cookie(cookie, key_in_db_to_look_for):
-    if check_cookie(cookie): #double check cookie exists
+    if check_cookie(cookie):  # double check cookie exists
         return users.find_one({"hashed_cookie": passwordSec.hash_cookie(cookie)})[str(key_in_db_to_look_for)]
     else:
         return "ERROR input cookie does not exist in db"
