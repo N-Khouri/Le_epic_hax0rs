@@ -24,7 +24,7 @@ connected_users = {}
 
 @app.errorhandler(404)
 def not_found(error):
-    return 'The requested URL/path does not exist.', 404
+    return render_template("404_error.html"), 404
 
 
 def check_and_get_cookie():
