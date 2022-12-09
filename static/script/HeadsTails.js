@@ -17,7 +17,7 @@ socket.on("username_in_js", (data) => {
     myUsername = data["username"];
 })
 
-const AUGH = new Audio('static/sounds/AUUGH.mp3');
+const youWin = new Audio('static/sounds/YouWin.mp3');
 const drumRoll = new Audio('static/sounds/DrumRoll.mp3');
 const womp = new Audio('static/sounds/womp.mp3');
 
@@ -63,7 +63,7 @@ function checkWinner() {
     if (playerChoice === outcome) {         // Won
         socket.emit("leaderboard_update_won", myUsername)
         document.getElementById("outcome").innerHTML = "You have: WON :D";
-        AUGH.play();
+        youWin.play();
     } else {                                // Lost
         socket.emit("leaderboard_update_lost", myUsername)
         document.getElementById("outcome").innerHTML = "You have: LOST >:( BOO YOU SUCK!";
