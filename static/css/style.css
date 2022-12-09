@@ -3,7 +3,8 @@
     --clr-neon-cyan: hsl(160 100% 54%);
     --clr-neon-purple: hsl(275 100% 54%);
     --clr-neon-pink: hsl(317 100% 54%);
-    --clr-neon-black: hsl(323 21% 16%)
+    --clr-neon-black: hsl(323 21% 16%);
+    --clr-neon-bluething: hsl(224 26% 61%);
 }
 
 body{
@@ -41,26 +42,51 @@ section {
     font-size: 3rem;
     position: relative;
     background-color: black;
-    border: 1px solid rgba(59,58,58,0.46);
     border-radius: 20px;
-    box-shadow: -10px 5px 10px gray;
     top: 0;
     transition: top ease 0.5s;
 
     font-size: 4rem;
-    cursor: pointer;
     text-decoration: none;
     color: var(--clr-neon-pink);
     border: var(--clr-neon-pink) 0.125em solid;
+    border-image: linear-gradient(0deg, var(--clr-neon-cyan), var(--clr-neon-pink)) 1;
     padding: 0.25em 1em;
     border-radius: 0.25em;
-    text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em currentColor;
-    box-shadow: inset 0 0 0.5em 0 var(--clr-neon-pink), 0 0 0.5em 0 var(--clr-neon-pink);  
+
+}
+
+.box:before {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(0deg, var(--clr-neon-cyan) 18%, var(--clr-neon-pink) 86% );
+    transform: translate3d(0px, -1px, 0) scale(1.08);
+    filter: blur(16px);
+    opacity: var(1);
+    transition: opacity 0.3s;
+    border-radius: inherit;
+}
+
+.box::after {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: inherit;
+    border-radius: inherit;
 }
 
 .header{
     color: var(--clr-neon-pink);
-    text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.99em currentColor;
+
 }
 
 .welcome-container{
@@ -449,12 +475,12 @@ tbody tr:nth-child(even){
     font-size: 1rem;
     cursor: pointer;
     text-decoration: none;
-    color: var(--clr-neon-pink);
-    border: var(--clr-neon-pink) 0.125em solid;
+    color: var(--clr-neon-cyan);
+    border: var(--clr-neon-cyan) 0.125em solid;
     padding: 1px 40px;
     border-radius: 0.25em;
     text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em currentColor;
-    box-shadow: inset 0 0 0.5em 0 var(--clr-neon-pink), 0 0 0.5em 0 var(--clr-neon-pink);
+    box-shadow: inset 0 0 0.5em 0 var(--clr-neon-cyan), 0 0 0.5em 0 var(--clr-neon-cyan);
     position: relative;
     bottom: -110%;
 }
@@ -463,7 +489,7 @@ tbody tr:nth-child(even){
     pointer-events: none;
     content: "";
     position: relative;
-    background: var(--clr-neon-pink);
+    background: var(--clr-neon-cyan);
     top: 120%;
     left: 0;
     width: 100%;
@@ -481,7 +507,7 @@ tbody tr:nth-child(even){
     bottom: 0;
     left: 0;
     right: 0;
-    box-shadow: 0 0 2em 0.5em var(--clr-neon-pink);
+    box-shadow: 0 0 2em 0.5em var(--clr-neon-cyan);
     opacity: 0;
     background-color: var(--clr-neon-black);
     z-index: -1;
@@ -489,7 +515,7 @@ tbody tr:nth-child(even){
 }
 
 .loginMenu:hover{
-    color: var(--clr-neon-pink);
+    color: var(--clr-neon-cyan);
 }
 
 .loginMenu:hover::before{
@@ -511,4 +537,10 @@ tbody tr:nth-child(even){
 .formInputs::placeholder{
     text-align: center;
     color: var(--clr-neon-pink);
+}
+
+.horizontalRule{
+    border-color: var(--clr-neon-bluething);
+    border: 3px solid var(--clr-neon-bluething);
+    margin: 24px 0;
 }
