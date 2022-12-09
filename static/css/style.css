@@ -25,34 +25,42 @@ section {
 }
 
 .container{
-    position: relative;
-    width: 400px;
-    height: 300px;
-    margin: 240px auto;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 300px;
 }
 
 .container .box{
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     font-weight: bold;
     font-size: 3rem;
     position: relative;
-    width: 400px;
-    height: 400px;
-    background-color: white;
+    background-color: black;
     border: 1px solid rgba(59,58,58,0.46);
     border-radius: 20px;
     box-shadow: -10px 5px 10px gray;
     top: 0;
     transition: top ease 0.5s;
+
+    font-size: 4rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--clr-neon-pink);
+    border: var(--clr-neon-pink) 0.125em solid;
+    padding: 0.25em 1em;
+    border-radius: 0.25em;
+    text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em currentColor;
+    box-shadow: inset 0 0 0.5em 0 var(--clr-neon-pink), 0 0 0.5em 0 var(--clr-neon-pink);  
 }
 
 .header{
-    position: absolute;
-    top: 0px;
-    text-shadow: -2px 4px 10px black;
-    color: white;
+    color: var(--clr-neon-pink);
+    text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.99em currentColor;
 }
 
 .welcome-container{
@@ -428,4 +436,79 @@ tbody tr:nth-child(even){
 
 .mainMenu:hover::after{
     opacity: .5;
+}
+
+.loginMenu{
+    display: inline-block;
+    text-align: center;
+    justify-content: center;
+    height: 50px;
+    width: 175px;
+    background-color: black;
+
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--clr-neon-pink);
+    border: var(--clr-neon-pink) 0.125em solid;
+    padding: 1px 40px;
+    border-radius: 0.25em;
+    text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em currentColor;
+    box-shadow: inset 0 0 0.5em 0 var(--clr-neon-pink), 0 0 0.5em 0 var(--clr-neon-pink);
+    position: relative;
+    bottom: -110%;
+}
+
+.loginMenu::before{
+    pointer-events: none;
+    content: "";
+    position: relative;
+    background: var(--clr-neon-pink);
+    top: 120%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  
+    transform: perspective(1em) rotateX(40deg) scale(1, 0.45);
+    filter: blur(1em);
+    opacity: 0.7;
+}
+
+.loginMenu::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 2em 0.5em var(--clr-neon-pink);
+    opacity: 0;
+    background-color: var(--clr-neon-black);
+    z-index: -1;
+    transition: opacity 100ms linear;
+}
+
+.loginMenu:hover{
+    color: var(--clr-neon-pink);
+}
+
+.loginMenu:hover::before{
+    opacity: 1;
+}
+
+.loginMenu:hover::after{
+    opacity: .5;
+}
+
+.formInputs {
+    background-color: var(--clr-neon-black);
+    padding: 8px;
+    width: 175px;
+    color: var(--clr-neon-pink);
+    border-color: var(--clr-neon-pink);
+}
+
+.formInputs::placeholder{
+    text-align: center;
+    color: var(--clr-neon-pink);
 }
