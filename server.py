@@ -127,10 +127,10 @@ def main_menu(from_login=0, username=None):
             return redirect(url_for("login"))
 
 
-@app.route('/nuke', methods=['GET', 'POST'])
-def nuke():
-    database.clear_db()
-    return redirect(url_for('login'))
+# @app.route('/nuke', methods=['GET', 'POST'])
+# def nuke():
+#     database.clear_db()
+#     return redirect(url_for('login'))
 
 
 @app.route('/logout', methods=['GET'])
