@@ -113,6 +113,8 @@ def main_menu(from_login=0, username=None):
         if get_cookie[0]:
             if request.method == 'GET':
                 get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+                database.delete_lobby(get_username)
+
                 print(get_username)
                 return render_template('main_menu.html', username=html.unescape(get_username),
                                        user=database.get_lobbies())
@@ -251,7 +253,10 @@ def response():
 @socketio.on("check_room")
 def check_existence(data):
     global all_rooms
-    if data in all_rooms:
+    if database.check_lobby(data) and all_rooms[data] != 2:
+        all_rooms[data] = all_rooms[data] + 1
+        get_username = database.get_username_by_id(data)
+        database.delete_lobby(get_username)
         file = open("templates/loading_screen.html", 'r')
         template = file.read()
         get_index = template.find("const socket = io();")

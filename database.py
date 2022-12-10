@@ -18,6 +18,11 @@ lobbies = database["lobbies"]
 def insert_lobby(lobby_number, username):
     lobbies.insert_one({"lobby": lobby_number, "user": username})
 
+def get_username_by_id(id):
+    roomid = lobbies.find_one({"lobby": id})
+    if roomid is not None:
+        return roomid["user"]
+
 
 def delete_lobby(username):
     lobbies.delete_many({"user": username})
@@ -29,6 +34,16 @@ def get_lobbies():
     for i in all_lobbies:
         to_return.append(str(i["user"]) + "'s lobby: " + str(i["lobby"]))
     return to_return
+
+def check_lobby(id):
+    print("id: " + str(id))
+    game_lobby = lobbies.find_one({"lobby": id})
+    print(game_lobby)
+    if game_lobby is not None:
+        return True
+    else:
+        return False
+
 
 
 def get_raw_lobbies():
