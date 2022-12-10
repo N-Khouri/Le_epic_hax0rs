@@ -195,14 +195,21 @@ def create_lobby():
     get_cookie = check_and_get_cookie()
     if get_cookie[0]:
         if request.method == 'GET':
+            global ready_players
+
             lobby_number = str(random.randint(1, 1000))
             get_cookie = check_and_get_cookie()
             get_username = database.get_db_info_via_cookie(get_cookie[1], "username")
+            existent_lobby = database.get_id_by_username(get_username)
+            print("existent lobby: ", existent_lobby)
+            if database.get_id_by_username(get_username)[1]:
+                get_old_id = database.get_id_by_username(get_username)[0]
+                database.delete_lobby(get_username)
+                del ready_players[get_old_id]
             database.insert_lobby(lobby_number, get_username)
             print("lobbies")
             print(database.get_lobbies())
 
-            global ready_players
             ready_players[lobby_number] = 0
 
             return render_template('loading_screen.html', lobby_name=lobby_number)
